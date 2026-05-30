@@ -9,7 +9,9 @@
     "start": "npm run build && node dist/backend/server.js",
     "db:reset": "tsx src/backend/database/reset.ts",
     "db:seed": "tsx src/backend/database/seed.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui"
   },
   "keywords": [],
   "author": "Norayr Petrosyan",
