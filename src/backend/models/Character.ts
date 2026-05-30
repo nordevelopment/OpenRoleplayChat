@@ -1,5 +1,19 @@
-import { getDB } from '../database/sqlite';
-import { Character as CharacterType } from '../types';
+import { getDB } from '../database/sqlite.js';
+
+export interface CharacterType {
+    id?: number;
+    slug: string;
+    name: string;
+    system_prompt?: string;
+    first_message?: string;
+    scenario?: string;
+    temperature: number;
+    max_tokens: number;
+    avatar?: string;
+    is_agent?: number;
+    reasoning?: number;
+    created_at?: string;
+}
 
 export class Character {
     static all(): CharacterType[] {
@@ -37,7 +51,7 @@ export class Character {
 
     static delete(slug: string): void {
         const char = this.findBySlug(slug);
-        if (char) {
+        if (char && char.id !== undefined) {
             getDB().prepare('DELETE FROM characters WHERE id = ?').run(char.id);
         }
     }

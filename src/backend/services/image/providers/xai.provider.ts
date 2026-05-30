@@ -1,6 +1,6 @@
-import { config } from '../../../config/config';
-import { BaseImageProvider } from './base.provider';
-import { GenerateOptions, EditOptions } from '../interfaces/types';
+import { config } from '../../../config/config.js';
+import { BaseImageProvider } from './base.provider.js';
+import type { GenerateOptions, EditOptions } from '../interfaces/types.js';
 
 export class XAIImageProvider extends BaseImageProvider {
     protected apiKey: string;

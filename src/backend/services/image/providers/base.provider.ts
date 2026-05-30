@@ -2,8 +2,8 @@ import axios from 'axios';
 import { randomBytes } from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { IImageProvider } from '../interfaces/image-provider.interface';
-import { GenerateOptions, EditOptions, ImageResult, DeleteResult } from '../interfaces/types';
+import type { IImageProvider } from '../interfaces/image-provider.interface.js';
+import type { EditOptions, DeleteResult, ImageResult, GenerateOptions } from '../interfaces/types.js';
 
 export abstract class BaseImageProvider implements IImageProvider {
     protected abstract apiKey: string;
@@ -154,7 +154,7 @@ export abstract class BaseImageProvider implements IImageProvider {
     /**
      * Обработка ошибок
      */
-    protected handleError(error: any, operation: string): ImageResult {
+    protected handleError(error: any, action?: string): ImageResult {
         let errorMessage = error.message;
 
         if (error.response) {
@@ -162,10 +162,14 @@ export abstract class BaseImageProvider implements IImageProvider {
             const apiError = error.response.data?.error?.message || error.response.data;
 
             if (status === 500) {
-                errorMessage = 'Server error (500). Check your request parameters.';
+                errorMessage = `Server error (500) during ${action || 'operation'}. Check your request parameters.`;
             } else if (apiError) {
                 errorMessage = typeof apiError === 'string' ? apiError : JSON.stringify(apiError);
             }
+        }
+
+        if (action) {
+            errorMessage = `Error during ${action}: ${errorMessage}`;
         }
 
         return { success: false, error: errorMessage };
@@ -176,15 +180,12 @@ export abstract class BaseImageProvider implements IImageProvider {
      */
     async listImages(): Promise<{ success: boolean; images: any[]; error?: string }> {
         try {
-            const fs = require('fs');
-            const path = require('path');
-            
             const generatedDir = path.join(process.cwd(), 'storage', 'generated');
-            
+
             if (!fs.existsSync(generatedDir)) {
                 return { success: true, images: [] };
             }
-            
+
             const files = fs.readdirSync(generatedDir);
             const imageFiles = files
                 .filter((file: string) => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
@@ -198,7 +199,7 @@ export abstract class BaseImageProvider implements IImageProvider {
                     };
                 })
                 .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-            
+
             return { success: true, images: imageFiles };
         } catch (error: any) {
             return { success: false, images: [], error: error.message };

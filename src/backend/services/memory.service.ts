@@ -5,8 +5,8 @@
  */
 
 import axios from 'axios';
-import { config } from '../config/config';
-import { getDB } from '../database/sqlite';
+import { config } from '../config/config.js';
+import { getDB } from '../database/sqlite.js';
 
 export interface MemorySearchResult {
     content: string;
@@ -19,25 +19,25 @@ export class MemoryService {
      */
     async validateAndMigrate(logger?: any): Promise<void> {
         if (!config.aiEmbeddingModel) return;
-        
+
         try {
             // Получаем размерность текущей модели
             const testEmbedding = await this.getEmbedding("dimension_check", logger);
             const currentDim = testEmbedding.length;
-            
+
             const db = getDB();
-            
+
             // Получаем размерность таблицы из schema
             const tableInfo = db.prepare("SELECT sql FROM sqlite_master WHERE name='vec_character_memories'").get() as any;
             let tableDim = 0;
-            
+
             if (tableInfo?.sql) {
                 const match = tableInfo.sql.match(/float\[(\d+)\]/);
                 if (match) {
                     tableDim = parseInt(match[1], 10);
                 }
             }
-            
+
             if (tableDim === 0) {
                 // Таблица не существует или не найдена - создаём
                 if (logger) {
@@ -48,7 +48,7 @@ export class MemoryService {
                 db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS vec_character_memories USING vec0(embedding float[${currentDim}]);`);
                 return;
             }
-            
+
             if (tableDim !== currentDim) {
                 // Размерность не совпадает - пересоздаём таблицу и очищаем данные
                 const logMsg = `Dimension mismatch: table=${tableDim}, model=${currentDim}. Recreating table.`;
@@ -57,14 +57,14 @@ export class MemoryService {
                 } else {
                     console.warn(`[MEMORY SERVICE] ⚠️  ${logMsg}`);
                 }
-                
+
                 // Удаляем старую таблицу и создаём новую
                 db.exec('DROP TABLE IF EXISTS vec_character_memories;');
                 db.exec(`CREATE VIRTUAL TABLE vec_character_memories USING vec0(embedding float[${currentDim}]);`);
-                
+
                 // Очищаем данные из основной таблицы
                 db.exec('DELETE FROM character_memories;');
-                
+
                 if (logger) {
                     logger.info('[MEMORY SERVICE] Vector table recreated');
                 } else {
@@ -89,7 +89,7 @@ export class MemoryService {
         if (!config.aiEmbeddingModel) {
             throw new Error('AI_EMBEDDING_MODEL is not configured. MemoryService is disabled.');
         }
-        
+
         try {
             const response = await axios.post(config.apiUrl.replace('/chat/completions', '/embeddings'), {
                 model: config.aiEmbeddingModel,
@@ -136,21 +136,21 @@ export class MemoryService {
                 const vecStmt = db.prepare('INSERT INTO vec_character_memories (rowid, embedding) VALUES (?, ?)');
                 // Явно используем BigInt, так как sqlite-vec v0.1.x требует этого для первичного ключа
                 vecStmt.run(BigInt(memoryId as any), new Float32Array(embedding));
-                
+
                 return memoryId;
             });
 
             const memoryId = transaction();
-            
+
             if (logger) {
                 logger.info({ characterId, memoryId: Number(memoryId), content: content.substring(0, 50) + '...' }, '[MEMORY SERVICE] Fact saved and vectorized');
             }
         } catch (error: any) {
             if (logger) {
-                logger.error({ 
-                    message: error.message, 
-                    code: error.code, 
-                    content 
+                logger.error({
+                    message: error.message,
+                    code: error.code,
+                    content
                 }, '[MEMORY SERVICE] Failed to add memory');
             } else {
                 console.error(`[MEMORY SERVICE] ❌ Failed to add memory: ${content}`, error);
@@ -166,7 +166,7 @@ export class MemoryService {
         try {
             // Get memory IDs to delete from vector table
             const memories = db.prepare('SELECT id FROM character_memories WHERE user_id = ? AND character_id = ?').all(userId, characterId) as any[];
-            
+
             const transaction = db.transaction(() => {
                 // Delete from vector table
                 for (const m of memories) {
@@ -175,9 +175,9 @@ export class MemoryService {
                 // Delete from main table
                 db.prepare('DELETE FROM character_memories WHERE user_id = ? AND character_id = ?').run(userId, characterId);
             });
-            
+
             transaction();
-            
+
             if (logger) {
                 logger.info({ userId, characterId, count: memories.length }, '[MEMORY SERVICE] Memories deleted');
             }
@@ -197,7 +197,7 @@ export class MemoryService {
         const db = getDB();
         try {
             const queryEmbedding = await this.getEmbedding(query, logger);
-            
+
             // Оптимизированный запрос для sqlite-vec v0.1.x
             const stmt = db.prepare(`
                 SELECT 
@@ -219,7 +219,7 @@ export class MemoryService {
 
             // Важно: параметры должны идти в порядке знаков вопроса в SQL
             const results = stmt.all(new Float32Array(queryEmbedding), userId, characterId, limit) as any[];
-            
+
             if (results.length > 0 && logger) {
                 logger.info({ query, count: results.length }, '[MEMORY SERVICE] Search results found');
                 results.forEach(r => logger.info({ distance: r.distance, content: r.content }, '   - Memory match'));

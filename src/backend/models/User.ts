@@ -1,5 +1,14 @@
-import { getDB } from '../database/sqlite';
-import { User as UserType } from '../types';
+import { getDB } from '../database/sqlite.js';
+
+export interface UserType {
+    id: number;
+    email: string;
+    password?: string;
+    display_name: string;
+    about?: string;
+    created_at: string;
+}
+
 
 export class User {
     static findByEmail(email: string): UserType | undefined {

@@ -4,10 +4,10 @@
  * @version 1.0.0
  */
 
-import { IImageProvider } from '../interfaces/image-provider.interface';
-import { ImageProviderType } from '../interfaces/types';
-import { XAIImageProvider } from '../providers/xai.provider';
-import { TogetherImageProvider } from '../providers/together.provider';
+import type { IImageProvider } from '../interfaces/image-provider.interface.js';
+import type { ImageProviderType } from '../interfaces/types.js';
+import { XAIImageProvider } from '../providers/xai.provider.js';
+import { TogetherImageProvider } from '../providers/together.provider.js';
 
 export class ImageProviderFactory {
     private static providers: Map<ImageProviderType, IImageProvider> = new Map();

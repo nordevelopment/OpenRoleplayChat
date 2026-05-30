@@ -3,12 +3,14 @@ import sharp from 'sharp';
 import fs from 'fs/promises';
 
 import { createParser } from 'eventsource-parser';
-import { config } from '../config/config';
-import { ChatMessage, Character as CharacterType, User } from '../types';
-import { Message } from '../models/Message';
-import { User as UserModel } from '../models/User';
-import { getAvailableTools, executeTool } from '../tools/tools';
-import { memoryService } from './memory.service';
+import { config } from '../config/config.js';
+import type { MessageType } from '../models/Message.js';
+import { Message } from '../models/Message.js';
+import { User } from '../models/User.js';
+import type { UserType } from '../models/User.js';
+import type { CharacterType } from '../models/Character.js';
+import { getAvailableTools, executeTool } from '../tools/tools.js';
+import { memoryService } from './memory.service.js';
 
 /**
  * OpenAI-compatible message types
@@ -56,7 +58,7 @@ export class AiService {
   /**
    * Extract key facts from history to long-term memory
    */
-  async extractFacts(messages: ChatMessage[], characterId: number, userId: number, logger?: any): Promise<void> {
+  async extractFacts(messages: MessageType[], characterId: number, userId: number, logger?: any): Promise<void> {
     if (messages.length === 0) return;
     try {
       const historyText = messages.map(m => `${m.role}: ${typeof m.content === 'string' ? m.content : '[Media]'}`).join('\n');
@@ -127,7 +129,7 @@ Return only a bulleted list of events, or "NONE" if no new events found. Use the
   /**
    * Core request to AI API
    */
-  async getAiResponse(character: CharacterType, history: ChatMessage[], logger?: any, user?: User, extraMessages?: AiMessage[], imageBase64?: string) {
+  async getAiResponse(character: CharacterType, history: MessageType[], logger?: any, user?: UserType, extraMessages?: AiMessage[], imageBase64?: string) {
     let sys = character.system_prompt || 'Helpful assistant.';
     if (user) {
       sys = sys.replace(/{{user}}/g, user.display_name);
@@ -351,7 +353,7 @@ Return only a bulleted list of events, or "NONE" if no new events found. Use the
     message?: string,
     imageBase64?: string,
     logger?: any,
-    user?: User
+    user?: UserType
   ): AsyncGenerator<{ reply?: string; reasoning?: string; done?: boolean; imageFilePath?: string }> {
 
     // character comes from DB so id is always present
@@ -401,8 +403,8 @@ Return only a bulleted list of events, or "NONE" if no new events found. Use the
 
       const { reply, reasoning, toolCalls } = yield* this.parseAiStream(response, character, logger, cumulativeUsage);
 
-      if (reasoning && logger) {
-        logger.info({ text: reasoning, iteration }, '[AI SERVICE] Reasoning Pass');
+      if (reasoning) {
+        console.log('[AI SERVICE] Reasoning Pass', reasoning);
       }
 
       if (toolCalls.length === 0) {

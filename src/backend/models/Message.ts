@@ -1,8 +1,21 @@
-import { getDB } from '../database/sqlite';
-import { ChatMessage } from '../types';
+import { getDB } from '../database/sqlite.js';
+
+export interface MessageType {
+    id?: number;
+    user_id?: number;
+    character_id?: number;
+    role: 'system' | 'user' | 'assistant' | 'tool';
+    content: string | any[] | null;
+    tool_calls?: any[];
+    tool_call_id?: string;
+    name?: string;
+    is_greeting?: number;
+    timestamp?: string;
+}
+
 
 export class Message {
-    static getHistory(characterId: number, userId: number): ChatMessage[] {
+    static getHistory(characterId: number, userId: number): MessageType[] {
         const rows = getDB().prepare('SELECT id, role, content FROM messages WHERE character_id = ? AND user_id = ? ORDER BY timestamp ASC').all(characterId, userId) as any[];
 
         return rows.map(r => {
@@ -17,12 +30,12 @@ export class Message {
             } catch (e) {
 
             }
-            
+
             return r;
         });
     }
 
-    static add(characterId: number, userId: number, message: ChatMessage, isGreeting: number = 0): void {
+    static add(characterId: number, userId: number, message: MessageType, isGreeting: number = 0): void {
         const hasMeta = !!(message.tool_calls || message.tool_call_id || message.name);
         let contentToSave: any;
 

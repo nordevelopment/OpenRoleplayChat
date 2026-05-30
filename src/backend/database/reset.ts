@@ -2,7 +2,11 @@ import Database from 'better-sqlite3';
 import * as sqliteVec from 'sqlite-vec';
 import fs from 'fs';
 import path from 'path';
-import { config } from '../config/config';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import { config } from '../config/config.js';
 
 function resetDatabase() {
     console.log('[DB] Starting database reset...');

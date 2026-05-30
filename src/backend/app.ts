@@ -1,24 +1,25 @@
-/**
- * Main application entry point
- * @author Norayr Petrosyan
- * @version 1.0.0
- */
-
 import path from 'path';
 import fs from 'fs';
-import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import { fileURLToPath } from 'url';
+import fastify, { type FastifyReply, type FastifyRequest } from 'fastify';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import fastifyStatic from '@fastify/static';
+import fastifyView from '@fastify/view';
+import ejs from 'ejs';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
-import { config } from './config/config';
+import fastifyMultipart from '@fastify/multipart';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
-import { characterRoutes } from './controllers/characters';
-import { chatRoutes } from './controllers/chat';
-import { authRoutes } from './controllers/auth';
-import { userRoutes } from './controllers/user';
-import { imageRoutes } from './controllers/image';
-import { telegramRoutes } from './controllers/telegram';
-import fastifyMultipart from '@fastify/multipart';
+import { config } from './config/config.js';
+import { characterRoutes } from './controllers/characters.js';
+import { chatRoutes } from './controllers/chat.js';
+import { authRoutes } from './controllers/auth.js';
+import { userRoutes } from './controllers/user.js';
+import { imageRoutes } from './controllers/image.js';
+import { viewsRoutes } from './controllers/views.js';
+import { initDB } from './database/sqlite.js';
 
 
 declare module 'fastify' {
@@ -36,6 +37,9 @@ declare module 'fastify' {
 }
 
 export async function createApp() {
+
+  initDB();
+
   const storagePath = path.join(__dirname, '../../storage');
   if (!fs.existsSync(storagePath)) {
     fs.mkdirSync(storagePath, { recursive: true });
@@ -58,7 +62,7 @@ export async function createApp() {
       // Теперь pino-pretty включается только если LOGING_DEBUG=true в .env
       transport: config.loggingDebug ? {
         target: 'pino-pretty',
-        options: { 
+        options: {
           colorize: true,
           translateTime: 'HH:MM:ss Z',
           ignore: 'pid,hostname',
@@ -95,16 +99,20 @@ export async function createApp() {
     }
   });
 
-  await server.register(fastifyStatic, {
-    root: config.frontendRoot,
-    prefix: '/public/',
-    logLevel: 'warn'
+  await server.register(fastifyView, {
+    engine: {
+      ejs: ejs
+    },
+    root: config.frontendRoot
   });
 
   await server.register(fastifyStatic, {
-    root: config.viewsRoot,
-    prefix: '/',
-    decorateReply: false,
+    root: [
+      path.join(process.cwd(), 'public/js'),
+      path.join(process.cwd(), 'public/css'),
+      path.join(process.cwd(), 'public/icons')
+    ],
+    prefix: '/public/',
     logLevel: 'warn'
   });
 
@@ -137,26 +145,14 @@ export async function createApp() {
     logLevel: 'warn'
   });
 
-  server.get('/', { logLevel: 'warn' }, async (req, reply) => reply.sendFile('index.html', config.viewsRoot));
-  server.get('/chat', { logLevel: 'warn' }, async (req, reply) => reply.sendFile('chat.html', config.viewsRoot));
-  server.get('/characters', { logLevel: 'warn' }, async (req, reply) => reply.sendFile('characters.html', config.viewsRoot));
-  server.get('/image-gen', { logLevel: 'warn' }, async (req, reply) => reply.sendFile('image-gen.html', config.viewsRoot));
-  server.get('/profile', { logLevel: 'warn' }, async (req, reply) => reply.sendFile('profile.html', config.viewsRoot));
-
   // Application Routes
+  await server.register(viewsRoutes);
   await server.register(authRoutes);
   await server.register(userRoutes);
   await server.register(characterRoutes);
 
   await server.register(chatRoutes);
   await server.register(imageRoutes);
-  
-  // Telegram integration (optional - won't fail if not configured)
-  try {
-    await server.register(telegramRoutes);
-  } catch (error) {
-    server.log.warn({ error }, '[APP] Failed to register telegram routes (continuing without telegram)');
-  }
 
   return server;
 }

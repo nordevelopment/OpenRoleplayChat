@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,47 +14,48 @@
     x-cloak>
 
     <div class="wrapper">
-    <nav class="navbar navbar-expand-lg navbar-cyber">
-        <div class="container-fluid">
-            <a class="navbar-brand navbar-brand-cyber" :href="prefix + '/chat'">AI Character Chat</a>
-            <button type="button" id="chat-sidebar-toggle" class="d-lg-none btn btn-outline-info me-2"
-                @click="sidebarActive = !sidebarActive">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi-list"
-                    viewBox="0 0 16 16">
-                    <path fill-rule="evenodd"
-                        d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-                </svg>
-            </button>
-            <div class="navbar-collapse" id="navbarNav">
-                <div class="dropdown">
-                    <div class="user-nav-summary dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <div class="profile-avatar-sm"
-                            x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
-                        <span>Chat Menu</span>
-                    </div>
+        <nav class="navbar navbar-expand-lg navbar-cyber">
+            <div class="container-fluid">
+                <a class="navbar-brand navbar-brand-cyber" :href="prefix + '/chat'">AI Character Chat</a>
+                <button type="button" id="chat-sidebar-toggle" class="d-lg-none btn btn-outline-info me-2"
+                    @click="sidebarActive = !sidebarActive">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi-list"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </button>
+                <div class="navbar-collapse" id="navbarNav">
+                    <div class="dropdown">
+                        <div class="user-nav-summary dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <div class="profile-avatar-sm"
+                                x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
+                            <span>Chat Menu</span>
+                        </div>
 
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-cyber" aria-labelledby="userDropdown">
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-cyber active" :href="prefix + '/chat'">Chat</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-cyber" :href="prefix + '/characters'">Characters</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-cyber" :href="prefix + '/image-gen'">Image Gen</a>
-                        </li>
-                        <li><a class="dropdown-item dropdown-item-cyber" :href="prefix + '/profile'">Profile Settings</a></li>
-                        <li>
-                            <hr class="dropdown-divider border-secondary">
-                        </li>
-                        <li><a class="dropdown-item dropdown-item-cyber text-danger" href="#"
-                                @click.prevent="logout()">Logout</a></li>
-                    </ul>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-cyber" aria-labelledby="userDropdown">
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-cyber active" :href="prefix + '/chat'">Chat</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-cyber" :href="prefix + '/characters'">Characters</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-cyber" :href="prefix + '/image-gen'">Image Gen</a>
+                            </li>
+                            <li><a class="dropdown-item dropdown-item-cyber" :href="prefix + '/profile'">Profile
+                                    Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider border-secondary">
+                            </li>
+                            <li><a class="dropdown-item dropdown-item-cyber text-danger" href="#"
+                                    @click.prevent="logout()">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
         <div class="container py-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -122,9 +124,11 @@
                                         <label class="form-label">Avatar</label>
                                         <div class="d-flex align-items-center gap-2">
                                             <template x-if="form.avatar">
-                                                <img :src="form.avatar" class="avatar-preview-sm" style="width: 38px; height: 38px; border-radius: 4px; object-fit: cover;">
+                                                <img :src="form.avatar" class="avatar-preview-sm"
+                                                    style="width: 38px; height: 38px; border-radius: 4px; object-fit: cover;">
                                             </template>
-                                            <input type="file" @change="onAvatarChange($event)" class="form-control" accept="image/*">
+                                            <input type="file" @change="onAvatarChange($event)" class="form-control"
+                                                accept="image/*">
                                         </div>
                                     </div>
                                 </div>

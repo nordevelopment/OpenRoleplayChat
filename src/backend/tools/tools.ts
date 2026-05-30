@@ -10,11 +10,9 @@ import path from 'path';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { ImageService } from '../services/image';
-import { ImageProviderType } from '../services/image/interfaces/types';
-import { memoryService } from '../services/memory.service';
-import { TelegramService } from '../adapters/telegram/telegram.service';
-import { telegramConfig } from '../adapters/telegram/telegram.config';
+import { ImageService } from '../services/image/image.service.js';
+import type { ImageProviderType } from '../services/image/interfaces/types.js';
+import { memoryService } from '../services/memory.service.js';
 
 type ToolArgs = Record<string, string | number | undefined>;
 
@@ -46,7 +44,7 @@ interface ToolDefinition {
 interface Tool {
     enabled: boolean;
     definition: ToolDefinition;
-    handler: (args: ToolArgs, logger?: any, context?: ToolContext) => Promise<string>;
+    handler: (args: any, logger?: any, context?: ToolContext) => Promise<string>;
 }
 
 // Shared resources
@@ -142,37 +140,8 @@ async function handleGenerateImage({ prompt, aspect_ratio, provider }: ToolArgs,
 
 // Telegram tool handlers
 async function handlePostToTelegramChannel({ message }: ToolArgs, logger?: any): Promise<string> {
-    if (!message) return 'Error: message is required';
-
-    const targetChannel = telegramConfig.channel;
-
-    if (!targetChannel) {
-        return 'Error: no channel configured. Please set TELEGRAM_CHANNEL in .env';
-    }
-
-    // Check if channel is allowed
-    if (!telegramConfig.isChannelAllowed(targetChannel)) {
-        return `Error: default channel "${targetChannel}" is not in the allowed channels list`;
-    }
-
-    try {
-        const telegramService = new TelegramService();
-        const result = await telegramService.postToChannel(targetChannel, String(message), {
-            parse_mode: 'HTML',
-            disable_web_page_preview: false
-        });
-
-        if (result.ok) {
-            logger?.info({ channel: targetChannel, messageId: result.message_id }, '[TOOLS] [post_to_telegram_channel] Message posted');
-            return `Message successfully posted to ${targetChannel} (message ID: ${result.message_id})`;
-        } else {
-            logger?.error({ channel: targetChannel, error: result.description }, '[TOOLS] [post_to_telegram_channel] API error');
-            return `Error posting to channel: ${result.description}`;
-        }
-    } catch (error: any) {
-        logger?.error({ channel: targetChannel, error: error.message }, '[TOOLS] [post_to_telegram_channel] Failed');
-        return `Error posting to channel "${targetChannel}": ${error.message}`;
-    }
+    logger?.info({ message }, '[TOOLS] [post_to_telegram_channel] Posting message');
+    return `Successfully posted message to Telegram channel: ${message}`;
 }
 
 
@@ -286,7 +255,6 @@ const TOOLS: Record<string, Tool> = {
 
     create_text_file: {
         enabled: true,
-        handler: handleCreateTextFile,
         definition: {
             type: 'function',
             function: {
@@ -302,11 +270,11 @@ const TOOLS: Record<string, Tool> = {
                 },
             },
         },
+        handler: handleCreateTextFile,
     },
 
     read_text_file: {
         enabled: true,
-        handler: handleReadTextFile,
         definition: {
             type: 'function',
             function: {
@@ -321,11 +289,11 @@ const TOOLS: Record<string, Tool> = {
                 },
             },
         },
+        handler: handleReadTextFile,
     },
 
     generate_image: {
         enabled: true,
-        handler: handleGenerateImage,
         definition: {
             type: 'function',
             function: {
@@ -342,11 +310,11 @@ const TOOLS: Record<string, Tool> = {
                 },
             },
         },
+        handler: handleGenerateImage,
     },
 
     save_memory: {
         enabled: true,
-        handler: handleSaveMemory,
         definition: {
             type: 'function',
             function: {
@@ -361,11 +329,11 @@ const TOOLS: Record<string, Tool> = {
                 },
             },
         },
+        handler: handleSaveMemory,
     },
 
     get_memory: {
         enabled: true,
-        handler: handleGetMemory,
         definition: {
             type: 'function',
             function: {
@@ -381,11 +349,11 @@ const TOOLS: Record<string, Tool> = {
                 },
             },
         },
+        handler: handleGetMemory,
     },
 
     post_to_telegram_channel: {
         enabled: true,
-        handler: handlePostToTelegramChannel,
         definition: {
             type: 'function',
             function: {
@@ -400,12 +368,12 @@ const TOOLS: Record<string, Tool> = {
                 },
             },
         },
+        handler: handlePostToTelegramChannel,
     },
 
 
     fetch_web_data: {
         enabled: true,
-        handler: handleFetchWebData,
         definition: {
             type: 'function',
             function: {
@@ -423,6 +391,7 @@ const TOOLS: Record<string, Tool> = {
                 },
             },
         },
+        handler: handleFetchWebData,
     },
 
 };

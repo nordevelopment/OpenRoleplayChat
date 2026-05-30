@@ -1,27 +1,19 @@
 /** 
  * Server entry point
  * @author Norayr Petrosyan
- * @version 1.5.0
  */
 
-import { initDB } from './database/sqlite';
-import { createApp } from './app';
-import { config } from './config/config';
-import { memoryService } from './services/memory.service';
+import { createApp } from './app.js';
+import { config } from './config/config.js';
 
 const start = async () => {
   try {
-    initDB();
-    
-    // Validate memory embeddings and migrate if needed
-    await memoryService.validateAndMigrate();
-    
     const server = await createApp();
-    await server.listen({ 
-        port: config.port, 
-        host: config.host 
+    await server.listen({
+      port: config.port,
+      host: config.host
     });
-    
+
   } catch (err) {
     console.error('[SERVER] Startup error:', err);
     process.exit(1);

@@ -1,1 +1,1 @@
-export { ImageProcessor } from './image.processor';
+export { ImageProcessor } from './image.processor.js';

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import { User } from '../models/User';
-import { Character } from '../models/Character';
+import { User } from '../models/User.js';
+import { Character } from '../models/Character.js';
 
 async function seed() {
     const display_name = 'Boss';

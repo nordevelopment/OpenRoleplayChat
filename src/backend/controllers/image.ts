@@ -1,5 +1,5 @@
-import { FastifyInstance } from 'fastify';
-import { ImageService } from '../services/image';
+import type { FastifyInstance } from 'fastify';
+import { ImageService } from '../services/image/image.service.js';
 
 const imageService = new ImageService();
 
@@ -9,10 +9,10 @@ imageService.setDefaultProvider('xai');
 export async function imageRoutes(fastify: FastifyInstance) {
     fastify.post('/api/images/generate', async (request, reply) => {
         try {
-            const body = request.body as { 
-                prompt: string; 
-                aspect_ratio?: string; 
-                steps?: number | string; 
+            const body = request.body as {
+                prompt: string;
+                aspect_ratio?: string;
+                steps?: number | string;
                 guidance?: number | string;
                 provider?: 'xai' | 'together';
             };
@@ -45,11 +45,11 @@ export async function imageRoutes(fastify: FastifyInstance) {
     // Маршрут для редактирования изображений
     fastify.post('/api/images/edit', async (request, reply) => {
         try {
-            const body = request.body as { 
-                prompt: string; 
+            const body = request.body as {
+                prompt: string;
                 reference_images: string[];
-                aspect_ratio?: string; 
-                steps?: number | string; 
+                aspect_ratio?: string;
+                steps?: number | string;
                 guidance?: number | string;
                 provider?: 'xai' | 'together';
             };
@@ -85,11 +85,11 @@ export async function imageRoutes(fastify: FastifyInstance) {
     });
 
     // Маршрут для получения информации о провайдерах
-    fastify.get('/api/images/providers', async (request, reply) => {
+    fastify.get('/api/images/providers', async (_request, reply) => {
         try {
             const providers = imageService.getAvailableProviders();
             const currentDefault = imageService.getCurrentDefaultProvider();
-            
+
             return reply.code(200).send({
                 success: true,
                 providers,
@@ -117,7 +117,7 @@ export async function imageRoutes(fastify: FastifyInstance) {
     });
 
     // Get list of all generated images
-    fastify.get('/api/images/list', async (request, reply) => {
+    fastify.get('/api/images/list', async (_request, reply) => {
         try {
             const result = await imageService.listImages();
             return reply.code(200).send(result);

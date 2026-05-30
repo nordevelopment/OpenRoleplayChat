@@ -1,9 +1,10 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import bcrypt from 'bcrypt';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
+
 
 export async function userRoutes(server: FastifyInstance) {
-    server.get('/api/me', { preHandler: [server.authenticate] }, async (request, reply) => {
+    server.get('/api/me', { preHandler: [server.authenticate] }, async (request) => {
         return { user: request.session.user };
     });
 

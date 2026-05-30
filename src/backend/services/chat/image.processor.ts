@@ -1,7 +1,6 @@
 /**
  * Image processor for resizing and optimizing images
  * @author Norayr Petrosyan
- * @version 1.0.0
  */
 
 import sharp from 'sharp';

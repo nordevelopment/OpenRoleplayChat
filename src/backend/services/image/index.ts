@@ -1,10 +1,10 @@
 // Экспортируем все необходимое для удобного использования
-export { ImageService } from './image.service';
-export { ImageProviderFactory } from './factory/image-provider.factory';
-export { XAIImageProvider } from './providers/xai.provider';
-export { TogetherImageProvider } from './providers/together.provider';
-export { BaseImageProvider } from './providers/base.provider';
+export { ImageService } from './image.service.js';
+export { ImageProviderFactory } from './factory/image-provider.factory.js';
+export { XAIImageProvider } from './providers/xai.provider.js';
+export { TogetherImageProvider } from './providers/together.provider.js';
+export { BaseImageProvider } from './providers/base.provider.js';
 
 // Экспортируем типы и интерфейсы
-export * from './interfaces/types';
-export * from './interfaces/image-provider.interface';
+export * from './interfaces/types.js';
+export * from './interfaces/image-provider.interface.js';

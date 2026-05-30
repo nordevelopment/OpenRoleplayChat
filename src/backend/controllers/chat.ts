@@ -1,11 +1,19 @@
-import { FastifyInstance } from 'fastify';
-import { Character as CharacterType, ChatRequestPayload, User } from '../types';
-import { Character } from '../models/Character';
-import { Message } from '../models/Message';
-import { User as UserModel } from '../models/User';
-import { aiService } from '../services/ai.service';
-import { memoryService } from '../services/memory.service';
-import { config } from '../config/config';
+import type { FastifyInstance } from 'fastify';
+import type { CharacterType } from '../models/Character.js';
+import { Character } from '../models/Character.js';
+import { Message } from '../models/Message.js';
+import { User as UserModel } from '../models/User.js';
+import { aiService } from '../services/ai.service.js';
+import { memoryService } from '../services/memory.service.js';
+import { config } from '../config/config.js';
+
+
+
+export interface ChatRequestPayload {
+  message: string;
+  character_id: number;
+  image?: string; // Base64
+}
 
 export async function chatRoutes(server: FastifyInstance, options?: { logger?: any }) {
   // Защищаем все роуты в этом модуле через хук
@@ -15,28 +23,28 @@ export async function chatRoutes(server: FastifyInstance, options?: { logger?: a
     const { message, character_id, image } = request.body as ChatRequestPayload;
     const userId = request.session.user!.id;
     request.log.info({ character_id, userId, messageLength: message?.length }, '[CHAT ROUTE] Incoming chat request');
-    
+
     // Validation checks
     if (!character_id) {
       return reply.code(400).send({ error: 'Character ID is required' });
     }
-    
+
     if (!Number.isInteger(Number(character_id)) || Number(character_id) <= 0) {
       return reply.code(400).send({ error: 'Invalid character ID format' });
     }
-    
+
     if (message && (typeof message !== 'string' || message.trim().length === 0)) {
       return reply.code(400).send({ error: 'Message cannot be empty' });
     }
-    
+
     if (message && message.length > 10000) {
       return reply.code(400).send({ error: 'Message too long (max 10000 characters)' });
     }
-    
+
     if (image && typeof image !== 'string') {
       return reply.code(400).send({ error: 'Invalid image format' });
     }
-    
+
     if (image && !image.startsWith('data:image/')) {
       return reply.code(400).send({ error: 'Invalid image format - must be base64 data URL' });
     }
@@ -84,11 +92,11 @@ export async function chatRoutes(server: FastifyInstance, options?: { logger?: a
   server.get('/api/history', async (request) => {
     const { character_id } = request.query as { character_id?: string };
     const userId = request.session.user!.id;
-    
+
     if (!character_id) {
       return [];
     }
-    
+
     if (!Number.isInteger(Number(character_id)) || Number(character_id) <= 0) {
       return [];
     }
@@ -105,11 +113,11 @@ export async function chatRoutes(server: FastifyInstance, options?: { logger?: a
   server.delete('/api/history/:id', async (request, reply) => {
     const userId = request.session.user!.id;
     const characterId = (request.params as any).id;
-    
+
     if (!characterId || !Number.isInteger(Number(characterId)) || Number(characterId) <= 0) {
       return reply.code(400).send({ error: 'Invalid character ID' });
     }
-    
+
     Message.deleteHistory(parseInt(characterId), userId);
     return { success: true };
   });
@@ -124,11 +132,11 @@ export async function chatRoutes(server: FastifyInstance, options?: { logger?: a
   server.delete('/api/memory/:characterId', async (request, reply) => {
     const userId = request.session.user!.id;
     const characterId = (request.params as any).characterId;
-    
+
     if (!characterId || !Number.isInteger(Number(characterId)) || Number(characterId) <= 0) {
       return reply.code(400).send({ error: 'Invalid character ID' });
     }
-    
+
     await memoryService.deleteMemories(userId, parseInt(characterId), request.log);
     return { success: true };
   });

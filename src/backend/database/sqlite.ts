@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import * as sqliteVec from 'sqlite-vec';
-import { config } from '../config/config';
+import { config } from '../config/config.js';
+import { memoryService } from '../services/memory.service.js';
 
 let db: Database.Database;
 
@@ -19,6 +20,7 @@ export function initDB(): Database.Database {
   db.pragma('journal_mode = WAL');
 
   console.log('[DB] SQLite connected and ready (with sqlite-vec).');
+  memoryService.validateAndMigrate();
   return db;
 }
 

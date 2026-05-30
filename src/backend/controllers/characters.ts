@@ -1,10 +1,16 @@
-import { FastifyInstance } from 'fastify';
-import { Character as CharacterType } from '../types';
-import { Character } from '../models/Character';
+import type { FastifyInstance } from 'fastify';
+import { Character } from '../models/Character.js';
+import type { CharacterType } from '../models/Character.js';
 import path from 'path';
 import fs from 'fs';
-import { config } from '../config/config';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import { config } from '../config/config.js';
 import sharp from 'sharp';
+
+
 
 export async function characterRoutes(server: FastifyInstance) {
   // Защищаем управление персонажами
@@ -31,14 +37,14 @@ export async function characterRoutes(server: FastifyInstance) {
     return newChar;
   });
 
-  server.put('/api/characters/:slug', async (request, reply) => {
+  server.put('/api/characters/:slug', async (request) => {
     const { slug } = request.params as { slug: string };
     const body = request.body as Partial<CharacterType>;
     const updated = Character.update(slug, body as CharacterType);
     return updated;
   });
 
-  server.delete('/api/characters/:slug', async (request, reply) => {
+  server.delete('/api/characters/:slug', async (request) => {
     const { slug } = request.params as { slug: string };
     Character.delete(slug);
     return { success: true };

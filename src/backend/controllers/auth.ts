@@ -1,6 +1,6 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import bcrypt from 'bcrypt';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 
 export async function authRoutes(server: FastifyInstance) {
   server.post('/api/login', async (request, reply) => {
@@ -41,7 +41,7 @@ export async function authRoutes(server: FastifyInstance) {
     }
   });
 
-  server.post('/api/logout', async (request, reply) => {
+  server.post('/api/logout', async (request) => {
     await request.session.destroy();
     return { success: true };
   });

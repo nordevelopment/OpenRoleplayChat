@@ -9,7 +9,7 @@ export const config = {
   apiUrl: process.env.API_URL || 'https://openrouter.ai/api/v1/chat/completions',
   apiKey: process.env.API_KEY || '',
 
-  aiDefaultModel: process.env.AI_DEFAULT_MODEL || 'x-ai/grok-4.1-fast', //dont change this model
+  aiDefaultModel: process.env.AI_DEFAULT_MODEL || '', //dont change this model
   aiEmbeddingModel: process.env.AI_EMBEDDING_MODEL || '',
 
   imageDefaultProvider: process.env.IMAGE_DEFAULT_PROVIDER || 'xai', // 'xai' | 'together'
