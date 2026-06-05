@@ -4,384 +4,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="public/config.js"></script>
-    <link rel="stylesheet" href="public/styles.css?v=15">
-    <!-- custom styles for generator -->
-    <style>
-        .image-preview-container {
-            border: 2px dashed var(--border-color);
-            background: rgba(0, 0, 0, 0.2);
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
+    <title>AI Image Generator - AI Character Chat</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        .image-preview-container img {
-            max-width: 100%;
-            max-height: 800px;
-            object-fit: contain;
-            border-radius: 6px;
-            z-index: 2;
-        }
-
-        .loading-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .image-settings-panel {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .provider-selector .btn-group .btn {
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--accent-teal);
-        }
-
-        .provider-selector .btn-group .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(56, 140, 129, 0.3);
-        }
-
-        .setting-card {
-            background: rgba(16, 41, 53, 0.4);
-            border: 1px solid rgba(56, 140, 129, 0.2);
-            border-radius: 8px;
-            padding: 12px;
-            transition: var(--transition-smooth);
-        }
-
-        .setting-card:hover {
-            border-color: var(--accent-teal);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(56, 140, 129, 0.2);
-        }
-
-        .prompt-container {
-            position: relative;
-        }
-
-        .prompt-preview {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(56, 140, 129, 0.2);
-            border-radius: 6px;
-            padding: 8px;
-            margin-top: 8px;
-            font-size: 0.9rem;
-            max-height: 60px;
-            overflow-y: auto;
-        }
-
-        .preview-text {
-            color: var(--text-dim);
-            line-height: 1.4;
-        }
-
-        .history-grid-modern {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
-        }
-
-        .history-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid var(--border-color);
-            background: var(--bg-card);
-        }
-
-        .history-item:hover {
-            transform: scale(1.05);
-            border-color: var(--accent-teal);
-            box-shadow: 0 4px 12px rgba(56, 140, 129, 0.3);
-        }
-
-        .history-image-container {
-            position: relative;
-            aspect-ratio: 1;
-        }
-
-        .history-image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .history-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            color: white;
-            padding: 8px;
-            font-size: 0.75rem;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .history-item:hover .history-overlay {
-            opacity: 1;
-        }
-
-        .history-prompt {
-            display: -webkit-box;
-            display: -moz-box;
-            display: box;
-            -webkit-line-clamp: 2;
-            -moz-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
-            -moz-box-orient: vertical;
-            box-orient: vertical;
-            overflow: hidden;
-            line-height: 1.3;
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(220, 53, 69, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.2s ease;
-            font-size: 12px;
-        }
-
-        .history-item:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .delete-btn:hover {
-            background: rgba(220, 53, 69, 1);
-            transform: scale(1.1);
-        }
-
-        .form-range::-webkit-slider-thumb {
-            background: var(--accent-teal);
-        }
-
-        .form-range::-moz-range-thumb {
-            background: var(--accent-teal);
-        }
-
-        .range-value {
-            background: var(--accent-teal);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            margin-left: 8px;
-        }
-
-        .history-grid img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .history-grid img:hover {
-            transform: scale(1.05);
-            border: 1px solid var(--accent-primary);
-        }
-    </style>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/public/cybercore.css">
+    <link rel="stylesheet" href="/public/styles.css?v=<%= version %>">
+    
+    <script src="/public/config.js"></script>
 </head>
 
 <body class="has-navbar"
     x-data="{ ...imageGenerator(), ...userProfileApp(), prefix: window.APP_CONFIG?.appPrefix || '' }" x-init="init()"
     x-cloak>
 
-    <div class="wrapper">
-        <nav class="navbar navbar-expand-lg navbar-cyber">
-            <div class="container-fluid">
-                <a class="navbar-brand navbar-brand-cyber" :href="prefix + '/chat'">AI Character Chat</a>
-                <button type="button" id="chat-sidebar-toggle" class="d-lg-none btn btn-outline-info me-2"
-                    @click="sidebarActive = !sidebarActive">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi-list"
-                        viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-                    </svg>
+    <div class="wrapper cyber-scanlines cyber-scanlines--scroll cyber-scanlines--fine" style="height: 100vh; overflow-y: auto;">
+        
+        <!-- Navigation bar -->
+        <nav class="cyber-nav">
+            <a :href="prefix + '/chat'" class="cyber-nav__brand">AI Character Chat</a>
+            <ul class="cyber-nav__links">
+                <li><a :href="prefix + '/chat'" class="cyber-nav__link">Chat</a></li>
+                <li><a :href="prefix + '/characters'" class="cyber-nav__link">Characters</a></li>
+                <li><a :href="prefix + '/image-gen'" class="cyber-nav__link cyber-nav__link--active">Image Gen</a></li>
+            </ul>
+            
+            <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }" :class="{ 'cyber-dropdown--open': open }" @click.away="open = false" style="margin-left: auto;">
+                <button type="button" class="cyber-dropdown__trigger" @click="open = !open">
+                    <div class="profile-avatar-sm" x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
+                    <span x-text="user.display_name || 'User'"></span>
                 </button>
-                <div class="navbar-collapse" id="navbarNav">
-                    <div class="dropdown">
-                        <div class="user-nav-summary dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <div class="profile-avatar-sm"
-                                x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
-                            <span>Chat Menu</span>
-                        </div>
-
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-cyber" aria-labelledby="userDropdown">
-                            <li class="nav-item">
-                                <a class="nav-link nav-link-cyber active" :href="prefix + '/chat'">Chat</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link nav-link-cyber" :href="prefix + '/characters'">Characters</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link nav-link-cyber" :href="prefix + '/image-gen'">Image Gen</a>
-                            </li>
-                            <li><a class="dropdown-item dropdown-item-cyber" :href="prefix + '/profile'">Profile Settings</a></li>
-                            <li>
-                                <hr class="dropdown-divider border-secondary">
-                            </li>
-                            <li><a class="dropdown-item dropdown-item-cyber text-danger" href="#"
-                                    @click.prevent="logout()">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
+                <ul class="cyber-dropdown__menu">
+                    <li><a :href="prefix + '/profile'" class="cyber-dropdown__item">Settings</a></li>
+                    <li><hr class="cyber-dropdown__divider"></li>
+                    <li><button class="cyber-dropdown__item text-danger" @click="logout()">Logout</button></li>
+                </ul>
             </div>
         </nav>
 
-        <div class="container py-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="m-0">AI Image Generator</h3>
+        <div style="padding: var(--space-md);">
+            <div class="cyber-mb-md">
+                <h2 class="m-0 cyber-text-glow" style="font-size: var(--text-2xl);">Image Synthesizer</h2>
             </div>
 
-            <div class="row">
-                <!-- Sidebar Settings -->
-                <div class="col-lg-5 mb-4">
-                    <div class="image-settings-panel">
-                        <div class="mb-3">
-                            <label class="form-label text-cyan">AI Provider</label>
-                            <div class="provider-selector">
-                                <div class="btn-group w-100" role="group">
-                                    <input type="radio" class="btn-check" name="provider" id="xai-provider" 
-                                           value="xai" x-model="form.provider">
-                                    <label class="btn btn-outline-info" for="xai-provider">
-                                        <i class="bi bi-cpu"></i> X.AI Grok
-                                    </label>
-                                    
-                                    <input type="radio" class="btn-check" name="provider" id="together-provider" 
-                                           value="together" x-model="form.provider">
-                                    <label class="btn btn-outline-success" for="together-provider">
-                                        <i class="bi bi-lightning"></i> Together AI
-                                    </label>
-                                </div>
-                            </div>
-                            <small class="text-muted" x-show="currentProviderInfo">
-                                Default: <span x-text="currentProviderInfo.currentDefault"></span>
-                            </small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label text-cyan">Prompt</label>
-                            <div class="prompt-container">
-                                <textarea x-model="form.prompt" class="form-control" rows="5"
-                                          placeholder="Describe the image you want to see..."
-                                          @input="updatePromptPreview()"></textarea>
-                                <div class="prompt-preview" x-show="form.prompt.length > 0">
-                                    <small class="text-muted">Preview:</small>
-                                    <div class="preview-text" x-text="form.prompt"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-4 mb-2">
-                                <div class="setting-card">
-                                    <label class="form-label text-cyan small">Aspect Ratio</label>
-                                    <select x-model="form.aspect_ratio" class="form-control form-control-sm">
-                                        <option value="1:1">1:1</option>
-                                        <option value="3:4">3:4</option>
-                                        <option value="4:3">4:3</option>
-                                        <option value="9:16">9:16</option>
-                                        <option value="16:9">16:9</option>
-                                        <option value="2:3">2:3</option>
-                                        <option value="3:2">3:2</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="setting-card">
-                                    <label class="form-label text-cyan small">
-                                        Steps <span class="range-value" x-text="form.steps"></span>
-                                    </label>
-                                    <input type="range" x-model="form.steps" class="form-range" min="1" max="50">
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="setting-card">
-                                    <label class="form-label text-cyan small">
-                                        Guidance <span class="range-value" x-text="form.guidance"></span>
-                                    </label>
-                                    <input type="range" x-model="form.guidance" class="form-range" min="1" max="20" step="0.5">
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-cyber w-100 py-3 d-flex justify-content-center align-items-center gap-2"
-                            @click="generateImage()" :disabled="loading || !form.prompt.trim()">
-                            <span x-show="!loading">Generate Image</span>
-                            <span x-show="loading">Generating...</span>
-                            <div x-show="loading" class="spinner-border spinner-border-sm text-light" role="status">
-                            </div>
-                        </button>
-
-                        <!-- Alert Message -->
-                        <div x-show="message.text" class="alert mt-3 mb-0"
-                            :class="message.type === 'error' ? 'alert-danger' : 'alert-success'" x-text="message.text"
-                            style="display: none;"></div>
+            <!-- Two column grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: var(--space-md); align-items: start;">
+                
+                <!-- Left panel: Settings -->
+                <div class="cyber-card">
+                    <div class="cyber-card__header">
+                        <div class="cyber-card__icon">//</div>
+                        <h3 class="cyber-card__title">Synthesis Configuration</h3>
                     </div>
+
+                    <div class="cyber-field">
+                        <label class="cyber-field__label">AI Provider</label>
+                        <div class="cyber-tabs cyber-tabs--pills">
+                            <ul class="cyber-tabs__list">
+                                <li>
+                                    <button type="button" class="cyber-tab" :class="{ 'cyber-tab--active': form.provider === 'xai' }" @click="form.provider = 'xai'">
+                                        X.AI Grok
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="cyber-tab" :class="{ 'cyber-tab--active': form.provider === 'together' }" @click="form.provider = 'together'">
+                                        Together AI
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <small class="cyber-text-muted" x-show="currentProviderInfo" style="margin-top: 4px; display: block;">
+                            Default model: <span x-text="currentProviderInfo.currentDefault"></span>
+                        </small>
+                    </div>
+
+                    <div class="cyber-field">
+                        <label class="cyber-field__label">Prompt Directives</label>
+                        <textarea x-model="form.prompt" class="cyber-textarea" rows="5"
+                            placeholder="Describe the image you want to see..."></textarea>
+                        <div class="cyber-mt-xs cyber-p-xs" x-show="form.prompt.length > 0" style="background: var(--cyber-void-800); border: 1px solid var(--color-border-default); border-left: 2px solid var(--cyber-cyan-500); font-family: var(--font-mono); font-size: var(--text-xs);">
+                            <span class="cyber-text-muted">PREVIEW BUFFER:</span>
+                            <div class="cyber-text-cyan" x-text="form.prompt" style="word-break: break-all;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Aspect Ratio / Steps / Guidance -->
+                    <div class="cyber-grid--3 cyber-gap-xs cyber-mb-md">
+                        <div class="cyber-card" style="padding: var(--space-2xs); background: var(--cyber-void-800);">
+                            <label class="cyber-field__label" style="font-size: var(--text-xs); margin-bottom: 2px;">Aspect</label>
+                            <select x-model="form.aspect_ratio" class="cyber-select" style="font-size: var(--text-xs); padding: 4px var(--space-sm) 4px 4px;">
+                                <option value="1:1">1:1</option>
+                                <option value="3:4">3:4</option>
+                                <option value="4:3">4:3</option>
+                                <option value="9:16">9:16</option>
+                                <option value="16:9">16:9</option>
+                                <option value="2:3">2:3</option>
+                                <option value="3:2">3:2</option>
+                            </select>
+                        </div>
+                        <div class="cyber-card" style="padding: var(--space-2xs); background: var(--cyber-void-800);">
+                            <label class="cyber-field__label" style="font-size: var(--text-xs); margin-bottom: 2px;">
+                                Steps: <span class="cyber-text-cyan" x-text="form.steps"></span>
+                            </label>
+                            <input type="range" x-model="form.steps" min="1" max="50" style="width: 100%; accent-color: var(--cyber-cyan-500); background: transparent;">
+                        </div>
+                        <div class="cyber-card" style="padding: var(--space-2xs); background: var(--cyber-void-800);">
+                            <label class="cyber-field__label" style="font-size: var(--text-xs); margin-bottom: 2px;">
+                                CFG: <span class="cyber-text-magenta" x-text="form.guidance"></span>
+                            </label>
+                            <input type="range" x-model="form.guidance" min="1" max="20" step="0.5" style="width: 100%; accent-color: var(--cyber-magenta-500); background: transparent;">
+                        </div>
+                    </div>
+
+                    <button class="cyber-btn cyber-btn--filled cyber-btn--magenta" style="width: 100%; display: flex;"
+                        @click="generateImage()" :disabled="loading || !form.prompt.trim()">
+                        <span x-show="!loading">SYNTHESIZE TEXTURE</span>
+                        <span x-show="loading">RENDERING MATRIX...</span>
+                    </button>
+
+                    <!-- Alert message -->
+                    <div x-show="message.text" class="cyber-alert cyber-mt-sm"
+                        :class="message.type === 'error' ? 'cyber-alert--error' : 'cyber-alert--success'" x-text="message.text"
+                        style="display: none; padding-left: var(--space-lg); font-size: var(--text-sm);"></div>
                 </div>
 
-                <!-- Result View -->
-                <div class="col-lg-7">
-                    <div class="image-preview-container">
-                        <!-- Loading State -->
-                        <div class="loading-overlay" x-show="loading" style="display: none;">
-                            <div class="spinner-border text-info mb-3" style="width: 3rem; height: 3rem;" role="status">
-                            </div>
-                            <h5 class="text-info glow-text">Synthesizing image...</h5>
-                            <p class="text-secondary small">This might take 10-20 seconds.</p>
+                <!-- Right panel: Preview -->
+                <div>
+                    <div class="cyber-card cyber-scanlines cyber-scanlines--fine" style="min-height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: var(--cyber-void-800);">
+                        <!-- Loading Overlay -->
+                        <div class="cyber-spinner-overlay" x-show="loading" style="display: none;">
+                            <div class="cyber-spinner cyber-spinner--glow cyber-spinner--lg"></div>
+                            <div class="cyber-spinner-overlay__text cyber-mt-sm">Synthesizing image...</div>
+                            <p class="cyber-text-muted cyber-font-normal" style="font-size: var(--text-xs); margin-top: 4px;">ESTIMATED TIME: 10-20 SECONDS</p>
                         </div>
 
                         <!-- Result Image -->
                         <template x-if="currentResult">
-                            <div
-                                class="text-center w-100 p-2 h-100 d-flex flex-column align-items-center justify-content-center">
-                                <div class="mb-2">
-                                    <span class="badge bg-info mb-2" x-text="'Provider: ' + (form.provider === 'xai' ? 'X.AI' : 'Together AI')"></span>
+                            <div class="cyber-text-center cyber-p-md" style="width: 100%;">
+                                <div class="cyber-mb-sm">
+                                    <span class="cyber-badge cyber-badge--filled cyber-badge--cyan"
+                                        x-text="'Provider: ' + (form.provider === 'xai' ? 'X.AI' : 'Together AI')"></span>
                                 </div>
-                                <img :src="currentResult.image_url" alt="Generated Image" class="shadow-lg mb-3">
-                                <div class="d-flex gap-2">
+                                <img :src="currentResult.image_url" alt="Generated Image" style="max-width: 100%; max-height: 500px; object-fit: contain; border: 1px solid var(--cyber-cyan-500); box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);" class="cyber-mb-md">
+                                <div class="cyber-flex cyber-justify-center cyber-gap-sm">
                                     <a :href="currentResult.image_url" target="_blank"
-                                        class="btn btn-sm btn-outline-info">
+                                        class="cyber-btn cyber-btn--sm cyber-btn--ghost">
                                         Full Size
                                     </a>
-                                    <button class="btn btn-sm btn-outline-secondary"
+                                    <button class="cyber-btn cyber-btn--sm cyber-btn--ghost"
                                         @click="copyPrompt(currentResult.prompt)">
                                         Copy Prompt
                                     </button>
@@ -391,37 +164,36 @@
 
                         <!-- Empty State -->
                         <template x-if="!currentResult && !loading">
-                            <div class="text-center text-secondary">
-                                <i class="bi bi-image" style="font-size: 4rem; opacity: 0.5;"></i>
-                                <p class="mt-2">Image will appear here</p>
+                            <div class="cyber-text-center cyber-text-muted">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16" style="opacity: 0.4;">
+                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                                </svg>
+                                <p class="cyber-mt-xs">Visual buffer empty. Initiate synthesis.</p>
                             </div>
                         </template>
                     </div>
 
-                    <div class="mt-4" x-show="history.length > 0 && showHistory">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center">
-                                <h5 class="text-secondary mb-0 me-3">Recent Generations</h5>
-                                <button class="btn btn-sm btn-outline-secondary" @click="showHistory = !showHistory">
-                                    <i class="bi" :class="showHistory ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                    <!-- History (Generations) -->
+                    <div class="cyber-mt-lg" x-show="history.length > 0 && showHistory">
+                        <div class="cyber-flex cyber-justify-between cyber-items-center cyber-mb-sm">
+                            <div class="cyber-flex cyber-items-center">
+                                <h3 class="m-0 cyber-text-glow" style="font-size: var(--text-base); margin-right: var(--space-sm) !important;">Recent Renders</h3>
+                                <button class="cyber-btn cyber-btn--sm cyber-btn--ghost" @click="showHistory = !showHistory">
                                     <span x-text="showHistory ? 'Hide' : 'Show'"></span>
                                 </button>
                             </div>
-                            <button class="btn btn-sm btn-outline-danger" @click="clearHistory()">
-                                <i class="bi bi-trash"></i> Clear All
+                            <button class="cyber-btn cyber-btn--sm cyber-btn--magenta" @click="clearHistory()">
+                                Clear All
                             </button>
                         </div>
-                        <div class="history-grid-modern">
+                        <div class="cyber-grid--4 cyber-gap-sm">
                             <template x-for="(item, index) in history" :key="index">
-                                <div class="history-item" @click="viewHistoryItem(item)">
-                                    <div class="history-image-container">
-                                        <img :src="item.image_url" :alt="item.prompt">
-                                        <div class="history-overlay">
-                                            <span class="history-prompt" x-text="item.prompt"></span>
-                                        </div>
-                                    </div>
-                                    <button class="delete-btn" @click.stop="deleteHistoryItem(item, index)">
-                                        <i class="bi bi-x"></i>
+                                <div class="cyber-card cyber-card--interactive" @click="viewHistoryItem(item)" style="padding: 0; overflow: hidden; position: relative;">
+                                    <img :src="item.image_url" :alt="item.prompt" style="width: 100%; height: 120px; object-fit: cover; display: block;">
+                                    <button class="cyber-btn cyber-btn--sm cyber-btn--filled cyber-btn--magenta" @click.stop="deleteHistoryItem(item, index)"
+                                        style="position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; padding: 0; line-height: 1; min-width: 0; border: none; display: flex; align-items: center; justify-content: center; clip-path: none;">
+                                        &times;
                                     </button>
                                 </div>
                             </template>
@@ -429,25 +201,22 @@
                     </div>
 
                     <!-- Show History Button (when hidden) -->
-                    <div class="mt-4" x-show="history.length > 0 && !showHistory">
-                        <div class="text-center">
-                            <button class="btn btn-outline-secondary" @click="showHistory = true">
-                                <i class="bi bi-images"></i>
-                                Show Recent Generations (<span x-text="history.length"></span>)
+                    <div class="cyber-mt-lg" x-show="history.length > 0 && !showHistory">
+                        <div class="cyber-text-center">
+                            <button class="cyber-btn cyber-btn--ghost" @click="showHistory = true">
+                                Show Recent Renders (<span x-text="history.length"></span>)
                             </button>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="public/app_userprofile.js?v=2"></script>
-    <script src="public/app_image_gen.js?v=2"></script>
+    <script src="/public/app_userprofile.js?v=<%= version %>"></script>
+    <script src="/public/app_image_gen.js?v=<%= version %>"></script>
 </body>
 
 </html>

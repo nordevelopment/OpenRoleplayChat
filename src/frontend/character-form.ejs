@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Configurator - AI Character Chat</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/public/cybercore.css">
+    <link rel="stylesheet" href="/public/styles.css?v=<%= version %>">
+
+    <script src="/public/config.js"></script>
+    <script>
+        window.CHARACTER_EDIT_SLUG = <%- editSlug ? JSON.stringify(editSlug) : 'null' %>;
+    </script>
+</head>
+
+<body class="has-navbar"
+    x-data="{ ...characterFormApp(), ...userProfileApp(), prefix: window.APP_CONFIG?.appPrefix || '' }" x-init="init()"
+    x-cloak>
+
+    <div class="wrapper cyber-scanlines cyber-scanlines--scroll cyber-scanlines--fine" style="height: 100vh; overflow-y: auto;">
+        
+        <!-- Navigation bar -->
+        <nav class="cyber-nav">
+            <a :href="prefix + '/chat'" class="cyber-nav__brand">AI Character Chat</a>
+            <ul class="cyber-nav__links">
+                <li><a :href="prefix + '/chat'" class="cyber-nav__link">Chat</a></li>
+                <li><a :href="prefix + '/characters'" class="cyber-nav__link cyber-nav__link--active">Characters</a></li>
+                <li><a :href="prefix + '/image-gen'" class="cyber-nav__link">Image Gen</a></li>
+            </ul>
+            
+            <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }" :class="{ 'cyber-dropdown--open': open }" @click.away="open = false" style="margin-left: auto;">
+                <button type="button" class="cyber-dropdown__trigger" @click="open = !open">
+                    <div class="profile-avatar-sm" x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
+                    <span x-text="user.display_name || 'User'"></span>
+                </button>
+                <ul class="cyber-dropdown__menu">
+                    <li><a :href="prefix + '/profile'" class="cyber-dropdown__item">Settings</a></li>
+                    <li><hr class="cyber-dropdown__divider"></li>
+                    <li><button class="cyber-dropdown__item text-danger" @click="logout()">Logout</button></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div style="display: flex; justify-content: center; padding: var(--space-md); margin-top: var(--space-md);">
+            <div class="cyber-card" style="width: 100%; max-width: 800px;">
+                <div class="cyber-card__header">
+                    <div class="cyber-card__icon">&lt;&gt;</div>
+                    <h3 class="cyber-card__title" x-text="form.slug ? 'Edit Character Matrix: ' + form.name : 'Deploy New Entity'"></h3>
+                </div>
+                
+                <form id="characterForm" class="needs-validation" novalidate :class="{'was-validated': formInvalid}">
+                    <div class="cyber-grid--2 cyber-gap-md">
+                        <div class="cyber-field">
+                            <label class="cyber-field__label">Entity Name *</label>
+                            <input type="text" x-model="form.name" class="cyber-input" required minlength="2" placeholder="Character Name">
+                        </div>
+                        <div class="cyber-field">
+                            <label class="cyber-field__label">Avatar Matrix</label>
+                            <div class="cyber-flex cyber-items-center cyber-gap-sm">
+                                <template x-if="form.avatar">
+                                    <img :src="form.avatar" class="avatar-preview-sm"
+                                        style="width: 38px; height: 38px; border: 1px solid var(--cyber-cyan-500); object-fit: cover;">
+                                </template>
+                                <input type="file" @change="onAvatarChange($event)" class="cyber-input" accept="image/*" style="flex: 1;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-field">
+                        <label class="cyber-field__label">Cognitive Directives (System Prompt)</label>
+                        <textarea x-model="form.system_prompt" class="cyber-textarea" rows="5"
+                            placeholder="Instruct character personality, style, knowledge bases..."></textarea>
+                    </div>
+
+                    <div class="cyber-field">
+                        <label class="cyber-field__label">Context Scenario</label>
+                        <textarea x-model="form.scenario" class="cyber-textarea" rows="2"
+                            placeholder="Describe context scenario, current situation, setting..."></textarea>
+                    </div>
+
+                    <div class="cyber-field">
+                        <label class="cyber-field__label">Greeting Payload (First Message)</label>
+                        <input type="text" x-model="form.first_message" class="cyber-input"
+                            placeholder="Greeting from the AI to initiate the link">
+                    </div>
+
+                    <div class="cyber-grid--2 cyber-gap-md cyber-mb-lg">
+                        <div class="cyber-grid--2 cyber-gap-xs">
+                            <div class="cyber-field">
+                                <label class="cyber-field__label">Entropy Temp</label>
+                                <input type="number" x-model="form.temperature" class="cyber-input" step="0.1"
+                                    min="0.1" max="1.2">
+                            </div>
+                            <div class="cyber-field">
+                                <label class="cyber-field__label">Max Output</label>
+                                <input type="number" x-model="form.max_tokens" class="cyber-input" min="100"
+                                    max="8000">
+                            </div>
+                        </div>
+                        
+                        <div class="cyber-flex cyber-flex-col cyber-gap-xs cyber-justify-center" style="padding-top: 10px;">
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" x-model="form.is_agent">
+                                <span class="cyber-checkbox__box"></span>
+                                <span class="cyber-checkbox__label">Enable Agent Tools</span>
+                            </label>
+                            
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" x-model="form.reasoning">
+                                <span class="cyber-checkbox__box"></span>
+                                <span class="cyber-checkbox__label">Enable Deep Reasoning</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="cyber-flex cyber-gap-sm">
+                        <button type="button" class="cyber-btn cyber-btn--filled cyber-btn--cyan" @click="saveCharacter()" :disabled="saveLoading">
+                            <span x-show="!saveLoading">Commit Configuration</span>
+                            <span x-show="saveLoading">Uploading Matrix...</span>
+                        </button>
+                        <a :href="prefix + '/characters'" class="cyber-btn cyber-btn--ghost">Abort</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="/public/app_userprofile.js?v=<%= version %>"></script>
+    <script src="/public/app_character_form.js?v=<%= version %>"></script>
+</body>
+
+</html>

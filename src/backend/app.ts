@@ -103,6 +103,9 @@ export async function createApp() {
     engine: {
       ejs: ejs
     },
+    defaultContext: {
+      version: Date.now()
+    },
     root: config.frontendRoot
   });
 

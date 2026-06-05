@@ -25,6 +25,23 @@ export async function viewsRoutes(server: FastifyInstance) {
         return reply.view('characters.ejs');
     });
 
+    // Add character page
+    server.get('/characters/add', async (request, reply) => {
+        if (!request.session.user) {
+            return reply.redirect('/');
+        }
+        return reply.view('character-form.ejs', { editSlug: null });
+    });
+
+    // Edit character page
+    server.get('/characters/edit/:slug', async (request, reply) => {
+        if (!request.session.user) {
+            return reply.redirect('/');
+        }
+        const { slug } = request.params as { slug: string };
+        return reply.view('character-form.ejs', { editSlug: slug });
+    });
+
     // Image generation page
     server.get('/image-gen', async (request, reply) => {
         if (!request.session.user) {

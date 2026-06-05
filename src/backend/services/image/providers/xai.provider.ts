@@ -1,6 +1,7 @@
 import { config } from '../../../config/config.js';
 import { BaseImageProvider } from './base.provider.js';
 import type { GenerateOptions, EditOptions } from '../interfaces/types.js';
+import axios from 'axios';
 
 export class XAIImageProvider extends BaseImageProvider {
     protected apiKey: string;
@@ -49,8 +50,6 @@ export class XAIImageProvider extends BaseImageProvider {
     protected async makeRequest(payload: any): Promise<any> {
         // Определяем URL в зависимости от типа payload
         const url = payload.images ? this.editUrl : this.apiUrl;
-
-        const axios = require('axios');
 
         return axios.post(url, payload, {
             headers: {

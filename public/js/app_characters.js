@@ -1,28 +1,11 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('characterManager', () => ({
         characters: [],
-        form: {
-            slug: null,
-            name: '',
-            avatar: '',
-            system_prompt: '',
-            scenario: '',
-            first_message: '',
-            temperature: '',
-            max_tokens: '',
-            is_agent: '',
-            reasoning: '',
-        },
-        avatarFile: null,
-        formInvalid: false,
-        bsModal: null,
-
         async init() {
             if (typeof this.checkAuth === 'function') {
                 if (!(await this.checkAuth())) return;
             }
 
-            this.bsModal = new bootstrap.Modal(this.$refs.charModal);
             this.loadCharacters();
         },
 
@@ -42,79 +25,6 @@ document.addEventListener('alpine:init', () => {
                 console.log('Loaded characters:', this.characters);
             } catch (error) {
                 console.error('Network error loading characters:', error);
-            }
-        },
-
-        prepareAdd() {
-            this.form = { slug: null, name: '', avatar: '', system_prompt: '', scenario: '', first_message: '', temperature: 0.8, max_tokens: 300, is_agent: 0, reasoning: 0 };
-            this.formInvalid = false;
-            this.bsModal.show();
-        },
-
-        prepareEdit(char) {
-            this.form = { ...char };
-            this.form.is_agent = char.is_agent === 1;
-            this.form.reasoning = char.reasoning === 1;
-            this.avatarFile = null;
-            this.formInvalid = false;
-            this.bsModal.show();
-        },
-
-        onAvatarChange(event) {
-            this.avatarFile = event.target.files[0];
-        },
-
-        async saveCharacter() {
-            const formEl = document.getElementById('characterForm');
-            if (!formEl.checkValidity()) {
-                this.formInvalid = true;
-                return;
-            }
-
-            const apiBase = window.APP_CONFIG?.apiBase || '/api';
-            const url = this.form.slug ? `${apiBase}/characters/${this.form.slug}` : `${apiBase}/characters`;
-            const method = this.form.slug ? 'PUT' : 'POST';
-
-            try {
-                // Если выбран файл аватара - сначала загружаем его
-                if (this.avatarFile) {
-                    const avatarFormData = new FormData();
-                    avatarFormData.append('file', this.avatarFile);
-                    const uploadRes = await fetch(`${apiBase}/characters/upload-avatar`, {
-                        method: 'POST',
-                        body: avatarFormData
-                    });
-                    if (uploadRes.ok) {
-                        const uploadData = await uploadRes.json();
-                        this.form.avatar = uploadData.path;
-                    } else {
-                        throw new Error('Avatar upload failed');
-                    }
-                }
-
-                // Преобразуем is_agent и reasoning в число для SQLite
-                const formData = { ...this.form };
-                if (typeof formData.is_agent === 'boolean') {
-                    formData.is_agent = formData.is_agent ? 1 : 0;
-                }
-                if (typeof formData.reasoning === 'boolean') {
-                    formData.reasoning = formData.reasoning ? 1 : 0;
-                }
-
-                const res = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-                if (res.ok) {
-                    this.bsModal.hide();
-                    this.loadCharacters();
-                } else {
-                    const data = await res.json();
-                    alert('Error: ' + data.error);
-                }
-            } catch (err) {
-                alert('Error saving character');
             }
         },
 
