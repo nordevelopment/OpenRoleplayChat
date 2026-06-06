@@ -111,6 +111,11 @@ npm run build && npm run start
 
 **🎉 Visit:** `http://localhost:3000`
 
+
+### Default Login - created by db:seed
+- **Email**: admin@example.com
+- **Password**: 12345678
+
 ---
 
 ## ⚙️ **Configuration**
