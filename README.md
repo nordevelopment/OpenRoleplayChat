@@ -442,9 +442,9 @@ We welcome contributions! Here's how to get started:
 
 ---
 
-## ⚡ **Why Choose AI Character Chat?**
+## ⚡ **Why Open Roleplay Chat?**
 
-| Feature            | AI Character Chat | SillyTavern     | Character.AI      |
+| Feature            | Open Roleplay Chat | SillyTavern     | Character.AI      |
 | ------------------ | ----------------- | --------------- | ----------------- |
 | **Setup Time**     | 5 minutes         | 30+ minutes     | Instant (cloud)   |
 | **Installation**   | 3 commands        | Docker + config | Web only          |
@@ -468,9 +468,8 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 ## 📞 **Support**
 
-- **Issues**: [GitHub Issues](https://github.com/nordevelopment/AICharactersChat/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/nordevelopment/AICharactersChat/discussions)
-- **Documentation**: [Wiki](https://github.com/nordevelopment/AICharactersChat/wiki)
+- **Issues**: [GitHub Issues](https://github.com/nordevelopment/OpenRoleplayChat/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/nordevelopment/OpenRoleplayChat/discussions)
 
 ---
 
