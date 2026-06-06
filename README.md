@@ -84,6 +84,10 @@ See **Quick Start** section below for detailed installation instructions.
 
 <img width="1267" height="898" alt="Image" src="https://github.com/user-attachments/assets/1f68cccc-1da8-42bc-a010-d04c8cff174b" />
 
+<img width="1225" height="891" alt="Image" src="https://github.com/user-attachments/assets/e4e6ead0-f925-46ff-9d90-2a4e2c467b3a" />
+
+<img width="1222" height="897" alt="Image" src="https://github.com/user-attachments/assets/e057118a-8188-4656-997f-4442b2231f29" />
+
 
 
 ---
