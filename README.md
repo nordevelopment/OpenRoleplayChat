@@ -1,6 +1,6 @@
-# AI Characters Chat 🤖🎭
+# Open Roleplay Chat (ORC) 🤖🎭
 
-> **The Lightweight AI Roleplay and Agents Platform - No Bloat, All Power**
+> **The Lightweight, Open-Source AI Roleplay and Agents Platform - No Bloat, All Power**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Fastify](https://img.shields.io/badge/Fastify-5.x-blue.svg)](https://www.fastify.io/)
@@ -11,11 +11,11 @@
 
 > "A solid move against the bloat. Repo looks clean—great stack for quick setups." — **Grok (xAI)**
 
-## 🎯 **Why AI Characters Chat?**
+## 🎯 **Why Open Roleplay Chat (ORC)?**
 
 **The Problem:** Most AI tools require 2GB Docker images, complex configurations, and 50+ setup steps.
 
-**Our Solution:** A **lightning-fast**, self-hosted platform that gets you roleplaying in **under 5 minutes**.
+**Our Solution:** A **lightning-fast**, self-hosted, open-source platform that gets you roleplaying in **under 5 minutes**.
 
 See **Quick Start** section below for detailed installation instructions.
 
@@ -59,34 +59,21 @@ See **Quick Start** section below for detailed installation instructions.
 
 ---
 
-## 🏗️ **Clean Architecture**
+## 🎯 **Use Cases**
 
-### **Backend Stack**
+### **Perfect For:**
 
-```
-🚀 Fastify 5 (TypeScript)    → 2x faster than Express
-💾 SQLite + sqlite-vec       → Zero-config vector database
-🧠 RAG Architecture          → Long-term memory retrieval
-🔐 Session Auth              → Simple, secure authentication
-📡 SSE Streaming             → Real-time responses
-🎨 Sharp                     → Fast image processing
-```
+- **Roleplaying Enthusiasts** - Create and manage AI characters
+- **Writers & Storytellers** - Develop characters and dialogue
+- **Developers** - AI-powered coding assistants
+- **Educators** - Interactive teaching characters
+- **Privacy-Conscious Users** - 100% local control
 
-### **Frontend Stack**
+### **Not For:**
 
-```
-⚡ Alpine.js 3               → Lightweight reactivity (<10KB)
-🎨 Bootstrap 5               → Professional UI components
-📝 Marked + Highlight.js     → Beautiful markdown rendering
-🛡️ DOMPurify                → XSS protection
-```
-
-### **AI Services**
-
-```
-🤖 OpenRouter API           → Access to all major AI models & Embeddings
-🎨 Together AI               → FLUX image generation
-```
+- **Mobile-Only Users** - Requires self-hosting
+- **No-Tech Users** - Basic setup required
+- **Enterprise Scale** - Designed for small teams/personal use
 
 ---
 ## 🚀 **Quick Start**
@@ -127,50 +114,37 @@ npm run build && npm run start
 ---
 
 ## ⚙️ **Configuration**
-
 ### **Required Variables**
 
 ```env
-# Security
-JWT_SECRET=your_jwt_secret_at_least_32_chars_long
-NODE_ENV=development # or production
-
-
-# Server
-PORT=3000 # Default port
-HOST=0.0.0.0 # Default host
-
-# AI Chat (OpenRouter)
-API_KEY=your_openrouter_api_key
-API_URL=https://openrouter.ai/api/v1/chat/completions
-AI_DEFAULT_MODEL=AI Model Name
-AI_EMBEDDING_MODEL=AI Embedding Model Name
-```
-
-### **Optional Variables**
-# Debugging
+NODE_ENV=development
 LOGGING_DEBUG=true
 DEBUG_REQUESTS=true
 AI_DEBUG_LOGS=true
 
-```env
-# Image Generation Providers
-# Provider 1: Together AI
+# auth secret token
+JWT_SECRET=your_jwt_secret_at_least_32_chars_long
+
+#AI Model API
+API_KEY=your_openrouter_api_key
+API_URL=https://openrouter.ai/api/v1/chat/completions
+AI_DEFAULT_MODEL=qwen/qwen3-vl-235b-a22b-instruct
+AI_EMBEDDING_MODEL=qwen/qwen3-embedding-8b
+
+## alternative
+TOGETHER_API_KEY=
 TOGETHER_IMAGE_API_URL=https://api.together.xyz/v1/images/generations
 TOGETHER_IMAGE_MODEL=black-forest-labs/FLUX.2-dev
 
-# Provider 2: XAI
-XAI_API_KEY=your_xai_api_key
-
-
+XAI_API_KEY=
 
 # Telegram Bot Integration
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_WEBHOOK_URL=
-TELEGRAM_WEBHOOK_SECRET=
-# Optional: Private mode ids (comma-separated) - default empty (public)
+TELEGRAM_WEBHOOK_SECRET=secret_code_to_check_hook
+# Optional: Private mode (only these users can access)
 TELEGRAM_ALLOWED_USERS=
-# Optional: Admin users ids (comma-separated) - default empty (no admin)
+# Optional: Admin users (can manage bot via API)
 TELEGRAM_ADMIN_USERS=
 # Optional: Features (disabled by default for security)
 TELEGRAM_ENABLE_IMAGES=false
@@ -181,20 +155,40 @@ TELEGRAM_DEFAULT_CHARACTER_ID=1
 TELEGRAM_RATE_LIMIT_PER_USER=30
 TELEGRAM_RATE_LIMIT_WINDOW=60
 
-# Telegram Channel ID (optional)
-TELEGRAM_CHANNEL=
+# TELEGRAM_CHANNEL=
 ```
+
 
 ---
 
-## 🔐 **Security Features**
+## 🏗️ **Clean Architecture**
 
-- **Session-based Authentication** - Simple, secure sessions
-- **Password Hashing** - bcrypt with 10 rounds
-- **XSS Protection** - DOMPurify sanitization
-- **Sandboxed File Operations** - AI tools restricted to safe directory
-- **CSRF Protection** - Built-in session security
+### **Backend Stack**
 
+```
+🚀 Fastify 5 (TypeScript)    → 2x faster than Express
+💾 SQLite + sqlite-vec       → Zero-config vector database
+🧠 RAG Architecture          → Long-term memory retrieval
+🔐 Session Auth              → Simple, secure authentication
+📡 SSE Streaming             → Real-time responses
+🎨 Sharp                     → Fast image processing
+```
+
+### **Frontend Stack**
+
+```
+⚡ Alpine.js 3               → Lightweight reactivity (<10KB)
+🎨 Bootstrap 5               → Professional UI components
+📝 Marked + Highlight.js     → Beautiful markdown rendering
+🛡️ DOMPurify                → XSS protection
+```
+
+### **AI Services**
+
+```
+🤖 OpenRouter API           → Access to all major AI models & Embeddings
+🎨 Together AI               → FLUX image generation
+```
 ---
 
 ## 🎨 **UI Features**
@@ -227,6 +221,16 @@ TELEGRAM_CHANNEL=
 
 ---
 
+## 🔐 **Security Features**
+
+- **Session-based Authentication** - Simple, secure sessions
+- **Password Hashing** - bcrypt with 10 rounds
+- **XSS Protection** - DOMPurify sanitization
+- **Sandboxed File Operations** - AI tools restricted to safe directory
+- **CSRF Protection** - Built-in session security
+
+---
+
 ## 📱 **Pages & Navigation**
 
 | Route             | Description         | Features                               |
@@ -237,6 +241,69 @@ TELEGRAM_CHANNEL=
 | **`/image-gen`**  | Image Generator     | FLUX model, aspect ratios, controls    |
 
 ---
+
+### **Configuration**
+
+Add these variables to your `.env` file:
+
+```env
+# Admin users who can use /post command
+TELEGRAM_ADMIN_USERS=123456789,987654321
+
+# Allowed channels (optional - restrict posting to specific channels)
+TELEGRAM_ALLOWED_CHANNELS=@mychannel,@anotherchannel
+
+# Default channel for quick posting
+TELEGRAM_DEFAULT_CHANNEL=@mychannel
+```
+
+### **Setup Requirements**
+
+1. **Bot Permissions**
+   - Add bot as administrator to target channels/groups
+   - Enable "Post Messages" permission
+   - For channels: bot must be admin with post rights
+   - For groups: bot needs "Can post messages" permission
+
+2. **Channel Identifiers**
+   - Use `@channelname` for public channels
+   - Use chat ID (numeric) for private groups/channels
+   - Get chat ID by adding bot to group and using `/start`
+
+3. **Security Best Practices**
+   - Always restrict admin users with `TELEGRAM_ADMIN_USERS`
+   - Use `TELEGRAM_ALLOWED_CHANNELS` to limit posting destinations
+   - Set a default channel to prevent accidental posts
+
+---
+
+## 🧠 **Technical Deep Dive**
+
+### **AI Chat Engine**
+
+```typescript
+// Memory Architecture
+User Message → Vector Search (sqlite-vec) → Relevant Facts → System Prompt Injection
+Context Builder → Fact Extraction → Vector Storage → History Cleanup
+```
+
+### **Image Generation Pipeline**
+
+```typescript
+User Prompt → Together AI → FLUX Model → Image Download → Local Storage
+Aspect Ratio → Pixel Optimization → Sharp Processing → Static Serving
+```
+
+### **Database Schema**
+
+```sql
+users        → Authentication & profiles
+characters   → AI personalities & settings
+messages     → Chat history with metadata
+```
+
+---
+
 
 ## 📱 **Telegram Bot Integration**
 
@@ -337,85 +404,6 @@ await post_to_telegram_channel({
 /post @channelname <b>Bold text</b> and <i>italic</i> - HTML formatting
 ```
 
-#### **Configuration**
-
-Add these variables to your `.env` file:
-
-```env
-# Admin users who can use /post command
-TELEGRAM_ADMIN_USERS=123456789,987654321
-
-# Allowed channels (optional - restrict posting to specific channels)
-TELEGRAM_ALLOWED_CHANNELS=@mychannel,@anotherchannel
-
-# Default channel for quick posting
-TELEGRAM_DEFAULT_CHANNEL=@mychannel
-```
-
-#### **Setup Requirements**
-
-1. **Bot Permissions**
-   - Add bot as administrator to target channels/groups
-   - Enable "Post Messages" permission
-   - For channels: bot must be admin with post rights
-   - For groups: bot needs "Can post messages" permission
-
-2. **Channel Identifiers**
-   - Use `@channelname` for public channels
-   - Use chat ID (numeric) for private groups/channels
-   - Get chat ID by adding bot to group and using `/start`
-
-3. **Security Best Practices**
-   - Always restrict admin users with `TELEGRAM_ADMIN_USERS`
-   - Use `TELEGRAM_ALLOWED_CHANNELS` to limit posting destinations
-   - Set a default channel to prevent accidental posts
-
----
-
-## 🧠 **Technical Deep Dive**
-
-### **AI Chat Engine**
-
-```typescript
-// Memory Architecture
-User Message → Vector Search (sqlite-vec) → Relevant Facts → System Prompt Injection
-Context Builder → Fact Extraction → Vector Storage → History Cleanup
-```
-
-### **Image Generation Pipeline**
-
-```typescript
-User Prompt → Together AI → FLUX Model → Image Download → Local Storage
-Aspect Ratio → Pixel Optimization → Sharp Processing → Static Serving
-```
-
-### **Database Schema**
-
-```sql
-users        → Authentication & profiles
-characters   → AI personalities & settings
-messages     → Chat history with metadata
-```
-
----
-
-## 🎯 **Use Cases**
-
-### **Perfect For:**
-
-- **Roleplaying Enthusiasts** - Create and manage AI characters
-- **Writers & Storytellers** - Develop characters and dialogue
-- **Developers** - AI-powered coding assistants
-- **Educators** - Interactive teaching characters
-- **Privacy-Conscious Users** - 100% local control
-
-### **Not For:**
-
-- **Mobile-Only Users** - Requires self-hosting
-- **No-Tech Users** - Basic setup required
-- **Enterprise Scale** - Designed for small teams/personal use
-
----
 
 ## 🛠️ **Development**
 
@@ -490,8 +478,7 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 **⭐ Star this repo if it helped you!**
 
-_Made with ❤️ by AI [Norayr Petrosyan](https://github.com/nordevelopment)_
-_Developed with AI control and Architecture by Norayr Petrosyan_
+_Made by [Norayr Petrosyan](https://github.com/nordevelopment)_
 
 ---
 
