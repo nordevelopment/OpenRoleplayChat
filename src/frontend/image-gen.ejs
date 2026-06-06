@@ -8,12 +8,14 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/public/cybercore.css">
     <link rel="stylesheet" href="/public/styles.css?v=<%= version %>">
-    
+
     <script src="/public/config.js"></script>
 </head>
 
@@ -21,197 +23,210 @@
     x-data="{ ...imageGenerator(), ...userProfileApp(), prefix: window.APP_CONFIG?.appPrefix || '' }" x-init="init()"
     x-cloak>
 
-    <div class="wrapper cyber-scanlines cyber-scanlines--scroll cyber-scanlines--fine" style="height: 100vh; overflow-y: auto;">
-        
-        <!-- Navigation bar -->
-        <nav class="cyber-nav">
-            <a :href="prefix + '/chat'" class="cyber-nav__brand">AI Character Chat</a>
-            <ul class="cyber-nav__links">
-                <li><a :href="prefix + '/chat'" class="cyber-nav__link">Chat</a></li>
-                <li><a :href="prefix + '/characters'" class="cyber-nav__link">Characters</a></li>
-                <li><a :href="prefix + '/image-gen'" class="cyber-nav__link cyber-nav__link--active">Image Gen</a></li>
-            </ul>
-            
-            <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }" :class="{ 'cyber-dropdown--open': open }" @click.away="open = false" style="margin-left: auto;">
-                <button type="button" class="cyber-dropdown__trigger" @click="open = !open">
-                    <div class="profile-avatar-sm" x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
-                    <span x-text="user.display_name || 'User'"></span>
-                </button>
-                <ul class="cyber-dropdown__menu">
-                    <li><a :href="prefix + '/profile'" class="cyber-dropdown__item">Settings</a></li>
-                    <li><hr class="cyber-dropdown__divider"></li>
-                    <li><button class="cyber-dropdown__item text-danger" @click="logout()">Logout</button></li>
-                </ul>
-            </div>
-        </nav>
+    <div class="wrapper cyber-scanlines cyber-scanlines--scroll cyber-scanlines--fine"
+        style="height: 100vh; overflow-y: auto;">
 
-        <div style="padding: var(--space-md);">
-            <div class="cyber-mb-md">
-                <h2 class="m-0 cyber-text-glow" style="font-size: var(--text-2xl);">Image Synthesizer</h2>
-            </div>
+        <!-- Head ( Navbar )  -->
+        <%- include('head_nav.ejs') %>
 
-            <!-- Two column grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: var(--space-md); align-items: start;">
-                
-                <!-- Left panel: Settings -->
-                <div class="cyber-card">
-                    <div class="cyber-card__header">
-                        <div class="cyber-card__icon">//</div>
-                        <h3 class="cyber-card__title">Synthesis Configuration</h3>
-                    </div>
-
-                    <div class="cyber-field">
-                        <label class="cyber-field__label">AI Provider</label>
-                        <div class="cyber-tabs cyber-tabs--pills">
-                            <ul class="cyber-tabs__list">
-                                <li>
-                                    <button type="button" class="cyber-tab" :class="{ 'cyber-tab--active': form.provider === 'xai' }" @click="form.provider = 'xai'">
-                                        X.AI Grok
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" class="cyber-tab" :class="{ 'cyber-tab--active': form.provider === 'together' }" @click="form.provider = 'together'">
-                                        Together AI
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                        <small class="cyber-text-muted" x-show="currentProviderInfo" style="margin-top: 4px; display: block;">
-                            Default model: <span x-text="currentProviderInfo.currentDefault"></span>
-                        </small>
-                    </div>
-
-                    <div class="cyber-field">
-                        <label class="cyber-field__label">Prompt Directives</label>
-                        <textarea x-model="form.prompt" class="cyber-textarea" rows="5"
-                            placeholder="Describe the image you want to see..."></textarea>
-                        <div class="cyber-mt-xs cyber-p-xs" x-show="form.prompt.length > 0" style="background: var(--cyber-void-800); border: 1px solid var(--color-border-default); border-left: 2px solid var(--cyber-cyan-500); font-family: var(--font-mono); font-size: var(--text-xs);">
-                            <span class="cyber-text-muted">PREVIEW BUFFER:</span>
-                            <div class="cyber-text-cyan" x-text="form.prompt" style="word-break: break-all;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Aspect Ratio / Steps / Guidance -->
-                    <div class="cyber-grid--3 cyber-gap-xs cyber-mb-md">
-                        <div class="cyber-card" style="padding: var(--space-2xs); background: var(--cyber-void-800);">
-                            <label class="cyber-field__label" style="font-size: var(--text-xs); margin-bottom: 2px;">Aspect</label>
-                            <select x-model="form.aspect_ratio" class="cyber-select" style="font-size: var(--text-xs); padding: 4px var(--space-sm) 4px 4px;">
-                                <option value="1:1">1:1</option>
-                                <option value="3:4">3:4</option>
-                                <option value="4:3">4:3</option>
-                                <option value="9:16">9:16</option>
-                                <option value="16:9">16:9</option>
-                                <option value="2:3">2:3</option>
-                                <option value="3:2">3:2</option>
-                            </select>
-                        </div>
-                        <div class="cyber-card" style="padding: var(--space-2xs); background: var(--cyber-void-800);">
-                            <label class="cyber-field__label" style="font-size: var(--text-xs); margin-bottom: 2px;">
-                                Steps: <span class="cyber-text-cyan" x-text="form.steps"></span>
-                            </label>
-                            <input type="range" x-model="form.steps" min="1" max="50" style="width: 100%; accent-color: var(--cyber-cyan-500); background: transparent;">
-                        </div>
-                        <div class="cyber-card" style="padding: var(--space-2xs); background: var(--cyber-void-800);">
-                            <label class="cyber-field__label" style="font-size: var(--text-xs); margin-bottom: 2px;">
-                                CFG: <span class="cyber-text-magenta" x-text="form.guidance"></span>
-                            </label>
-                            <input type="range" x-model="form.guidance" min="1" max="20" step="0.5" style="width: 100%; accent-color: var(--cyber-magenta-500); background: transparent;">
-                        </div>
-                    </div>
-
-                    <button class="cyber-btn cyber-btn--filled cyber-btn--magenta" style="width: 100%; display: flex;"
-                        @click="generateImage()" :disabled="loading || !form.prompt.trim()">
-                        <span x-show="!loading">SYNTHESIZE TEXTURE</span>
-                        <span x-show="loading">RENDERING MATRIX...</span>
-                    </button>
-
-                    <!-- Alert message -->
-                    <div x-show="message.text" class="cyber-alert cyber-mt-sm"
-                        :class="message.type === 'error' ? 'cyber-alert--error' : 'cyber-alert--success'" x-text="message.text"
-                        style="display: none; padding-left: var(--space-lg); font-size: var(--text-sm);"></div>
+            <div style="padding: var(--space-md);">
+                <div class="cyber-mb-md">
+                    <h2 class="m-0 cyber-text-glow" style="font-size: var(--text-2xl);">Image Synthesizer</h2>
                 </div>
 
-                <!-- Right panel: Preview -->
-                <div>
-                    <div class="cyber-card cyber-scanlines cyber-scanlines--fine" style="min-height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: var(--cyber-void-800);">
-                        <!-- Loading Overlay -->
-                        <div class="cyber-spinner-overlay" x-show="loading" style="display: none;">
-                            <div class="cyber-spinner cyber-spinner--glow cyber-spinner--lg"></div>
-                            <div class="cyber-spinner-overlay__text cyber-mt-sm">Synthesizing image...</div>
-                            <p class="cyber-text-muted cyber-font-normal" style="font-size: var(--text-xs); margin-top: 4px;">ESTIMATED TIME: 10-20 SECONDS</p>
+                <!-- Two column grid -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: var(--space-md); align-items: start;">
+
+                    <!-- Left panel: Settings -->
+                    <div class="cyber-card">
+                        <div class="cyber-card__header">
+                            <div class="cyber-card__icon">//</div>
+                            <h3 class="cyber-card__title">Synthesis Configuration</h3>
                         </div>
 
-                        <!-- Result Image -->
-                        <template x-if="currentResult">
-                            <div class="cyber-text-center cyber-p-md" style="width: 100%;">
-                                <div class="cyber-mb-sm">
-                                    <span class="cyber-badge cyber-badge--filled cyber-badge--cyan"
-                                        x-text="'Provider: ' + (form.provider === 'xai' ? 'X.AI' : 'Together AI')"></span>
-                                </div>
-                                <img :src="currentResult.image_url" alt="Generated Image" style="max-width: 100%; max-height: 500px; object-fit: contain; border: 1px solid var(--cyber-cyan-500); box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);" class="cyber-mb-md">
-                                <div class="cyber-flex cyber-justify-center cyber-gap-sm">
-                                    <a :href="currentResult.image_url" target="_blank"
-                                        class="cyber-btn cyber-btn--sm cyber-btn--ghost">
-                                        Full Size
-                                    </a>
-                                    <button class="cyber-btn cyber-btn--sm cyber-btn--ghost"
-                                        @click="copyPrompt(currentResult.prompt)">
-                                        Copy Prompt
-                                    </button>
-                                </div>
+                        <div class="cyber-field">
+                            <label class="cyber-field__label">AI Provider</label>
+                            <div class="cyber-tabs cyber-tabs--pills">
+                                <ul class="cyber-tabs__list">
+                                    <li>
+                                        <button type="button" class="cyber-tab"
+                                            :class="{ 'cyber-tab--active': form.provider === 'xai' }"
+                                            @click="form.provider = 'xai'">
+                                            X.AI Grok
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="cyber-tab"
+                                            :class="{ 'cyber-tab--active': form.provider === 'together' }"
+                                            @click="form.provider = 'together'">
+                                            Together AI
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
-                        </template>
+                            <small class="cyber-text-muted" x-show="currentProviderInfo"
+                                style="margin-top: 4px; display: block;">
+                                Default model: <span x-text="currentProviderInfo.currentDefault"></span>
+                            </small>
+                        </div>
 
-                        <!-- Empty State -->
-                        <template x-if="!currentResult && !loading">
-                            <div class="cyber-text-center cyber-text-muted">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16" style="opacity: 0.4;">
-                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
-                                </svg>
-                                <p class="cyber-mt-xs">Visual buffer empty. Initiate synthesis.</p>
+                        <div class="cyber-field">
+                            <label class="cyber-field__label">Prompt Directives</label>
+                            <textarea x-model="form.prompt" class="cyber-textarea" rows="5"
+                                placeholder="Describe the image you want to see..."></textarea>
+                            <div class="cyber-mt-xs cyber-p-xs" x-show="form.prompt.length > 0"
+                                style="background: var(--cyber-void-800); border: 1px solid var(--color-border-default); border-left: 2px solid var(--cyber-cyan-500); font-family: var(--font-mono); font-size: var(--text-xs);">
+                                <span class="cyber-text-muted">PREVIEW BUFFER:</span>
+                                <div class="cyber-text-cyan" x-text="form.prompt" style="word-break: break-all;"></div>
                             </div>
-                        </template>
+                        </div>
+
+                        <!-- Aspect Ratio / Steps / Guidance -->
+                        <div class="cyber-grid--3 cyber-gap-xs cyber-mb-md">
+                            <div class="cyber-card"
+                                style="padding: var(--space-2xs); background: var(--cyber-void-800);">
+                                <label class="cyber-field__label"
+                                    style="font-size: var(--text-xs); margin-bottom: 2px;">Aspect</label>
+                                <select x-model="form.aspect_ratio" class="cyber-select"
+                                    style="font-size: var(--text-xs); padding: 4px var(--space-sm) 4px 4px;">
+                                    <option value="1:1">1:1</option>
+                                    <option value="3:4">3:4</option>
+                                    <option value="4:3">4:3</option>
+                                    <option value="9:16">9:16</option>
+                                    <option value="16:9">16:9</option>
+                                    <option value="2:3">2:3</option>
+                                    <option value="3:2">3:2</option>
+                                </select>
+                            </div>
+                            <div class="cyber-card"
+                                style="padding: var(--space-2xs); background: var(--cyber-void-800);">
+                                <label class="cyber-field__label"
+                                    style="font-size: var(--text-xs); margin-bottom: 2px;">
+                                    Steps: <span class="cyber-text-cyan" x-text="form.steps"></span>
+                                </label>
+                                <input type="range" x-model="form.steps" min="1" max="50"
+                                    style="width: 100%; accent-color: var(--cyber-cyan-500); background: transparent;">
+                            </div>
+                            <div class="cyber-card"
+                                style="padding: var(--space-2xs); background: var(--cyber-void-800);">
+                                <label class="cyber-field__label"
+                                    style="font-size: var(--text-xs); margin-bottom: 2px;">
+                                    CFG: <span class="cyber-text-magenta" x-text="form.guidance"></span>
+                                </label>
+                                <input type="range" x-model="form.guidance" min="1" max="20" step="0.5"
+                                    style="width: 100%; accent-color: var(--cyber-magenta-500); background: transparent;">
+                            </div>
+                        </div>
+
+                        <button class="cyber-btn cyber-btn--filled cyber-btn--magenta"
+                            style="width: 100%; display: flex;" @click="generateImage()"
+                            :disabled="loading || !form.prompt.trim()">
+                            <span x-show="!loading">SYNTHESIZE TEXTURE</span>
+                            <span x-show="loading">RENDERING MATRIX...</span>
+                        </button>
+
+                        <!-- Alert message -->
+                        <div x-show="message.text" class="cyber-alert cyber-mt-sm"
+                            :class="message.type === 'error' ? 'cyber-alert--error' : 'cyber-alert--success'"
+                            x-text="message.text"
+                            style="display: none; padding-left: var(--space-lg); font-size: var(--text-sm);"></div>
                     </div>
 
-                    <!-- History (Generations) -->
-                    <div class="cyber-mt-lg" x-show="history.length > 0 && showHistory">
-                        <div class="cyber-flex cyber-justify-between cyber-items-center cyber-mb-sm">
-                            <div class="cyber-flex cyber-items-center">
-                                <h3 class="m-0 cyber-text-glow" style="font-size: var(--text-base); margin-right: var(--space-sm) !important;">Recent Renders</h3>
-                                <button class="cyber-btn cyber-btn--sm cyber-btn--ghost" @click="showHistory = !showHistory">
-                                    <span x-text="showHistory ? 'Hide' : 'Show'"></span>
-                                </button>
+                    <!-- Right panel: Preview -->
+                    <div>
+                        <div class="cyber-card cyber-scanlines cyber-scanlines--fine"
+                            style="min-height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: var(--cyber-void-800);">
+                            <!-- Loading Overlay -->
+                            <div class="cyber-spinner-overlay" x-show="loading" style="display: none;">
+                                <div class="cyber-spinner cyber-spinner--glow cyber-spinner--lg"></div>
+                                <div class="cyber-spinner-overlay__text cyber-mt-sm">Synthesizing image...</div>
+                                <p class="cyber-text-muted cyber-font-normal"
+                                    style="font-size: var(--text-xs); margin-top: 4px;">ESTIMATED TIME: 10-20 SECONDS
+                                </p>
                             </div>
-                            <button class="cyber-btn cyber-btn--sm cyber-btn--magenta" @click="clearHistory()">
-                                Clear All
-                            </button>
-                        </div>
-                        <div class="cyber-grid--4 cyber-gap-sm">
-                            <template x-for="(item, index) in history" :key="index">
-                                <div class="cyber-card cyber-card--interactive" @click="viewHistoryItem(item)" style="padding: 0; overflow: hidden; position: relative;">
-                                    <img :src="item.image_url" :alt="item.prompt" style="width: 100%; height: 120px; object-fit: cover; display: block;">
-                                    <button class="cyber-btn cyber-btn--sm cyber-btn--filled cyber-btn--magenta" @click.stop="deleteHistoryItem(item, index)"
-                                        style="position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; padding: 0; line-height: 1; min-width: 0; border: none; display: flex; align-items: center; justify-content: center; clip-path: none;">
-                                        &times;
-                                    </button>
+
+                            <!-- Result Image -->
+                            <template x-if="currentResult">
+                                <div class="cyber-text-center cyber-p-md" style="width: 100%;">
+                                    <div class="cyber-mb-sm">
+                                        <span class="cyber-badge cyber-badge--filled cyber-badge--cyan"
+                                            x-text="'Provider: ' + (form.provider === 'xai' ? 'X.AI' : 'Together AI')"></span>
+                                    </div>
+                                    <img :src="currentResult.image_url" alt="Generated Image"
+                                        style="max-width: 100%; max-height: 500px; object-fit: contain; border: 1px solid var(--cyber-cyan-500); box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);"
+                                        class="cyber-mb-md">
+                                    <div class="cyber-flex cyber-justify-center cyber-gap-sm">
+                                        <a :href="currentResult.image_url" target="_blank"
+                                            class="cyber-btn cyber-btn--sm cyber-btn--ghost">
+                                            Full Size
+                                        </a>
+                                        <button class="cyber-btn cyber-btn--sm cyber-btn--ghost"
+                                            @click="copyPrompt(currentResult.prompt)">
+                                            Copy Prompt
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Empty State -->
+                            <template x-if="!currentResult && !loading">
+                                <div class="cyber-text-center cyber-text-muted">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                                        viewBox="0 0 16 16" style="opacity: 0.4;">
+                                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                        <path
+                                            d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
+                                    </svg>
+                                    <p class="cyber-mt-xs">Visual buffer empty. Initiate synthesis.</p>
                                 </div>
                             </template>
                         </div>
-                    </div>
 
-                    <!-- Show History Button (when hidden) -->
-                    <div class="cyber-mt-lg" x-show="history.length > 0 && !showHistory">
-                        <div class="cyber-text-center">
-                            <button class="cyber-btn cyber-btn--ghost" @click="showHistory = true">
-                                Show Recent Renders (<span x-text="history.length"></span>)
-                            </button>
+                        <!-- History (Generations) -->
+                        <div class="cyber-mt-lg" x-show="history.length > 0 && showHistory">
+                            <div class="cyber-flex cyber-justify-between cyber-items-center cyber-mb-sm">
+                                <div class="cyber-flex cyber-items-center">
+                                    <h3 class="m-0 cyber-text-glow"
+                                        style="font-size: var(--text-base); margin-right: var(--space-sm) !important;">
+                                        Recent Renders</h3>
+                                    <button class="cyber-btn cyber-btn--sm cyber-btn--ghost"
+                                        @click="showHistory = !showHistory">
+                                        <span x-text="showHistory ? 'Hide' : 'Show'"></span>
+                                    </button>
+                                </div>
+                                <button class="cyber-btn cyber-btn--sm cyber-btn--magenta" @click="clearHistory()">
+                                    Clear All
+                                </button>
+                            </div>
+                            <div class="cyber-grid--4 cyber-gap-sm">
+                                <template x-for="(item, index) in history" :key="index">
+                                    <div class="cyber-card cyber-card--interactive" @click="viewHistoryItem(item)"
+                                        style="padding: 0; overflow: hidden; position: relative;">
+                                        <img :src="item.image_url" :alt="item.prompt"
+                                            style="width: 100%; height: 120px; object-fit: cover; display: block;">
+                                        <button class="cyber-btn cyber-btn--sm cyber-btn--filled cyber-btn--magenta"
+                                            @click.stop="deleteHistoryItem(item, index)"
+                                            style="position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; padding: 0; line-height: 1; min-width: 0; border: none; display: flex; align-items: center; justify-content: center; clip-path: none;">
+                                            &times;
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Show History Button (when hidden) -->
+                        <div class="cyber-mt-lg" x-show="history.length > 0 && !showHistory">
+                            <div class="cyber-text-center">
+                                <button class="cyber-btn cyber-btn--ghost" @click="showHistory = true">
+                                    Show Recent Renders (<span x-text="history.length"></span>)
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
-        </div>
     </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

@@ -1,0 +1,32 @@
+<!-- Custom Cybercore Nav -->
+<nav class="cyber-nav">
+    <button type="button" id="chat-sidebar-toggle" class="cyber-btn cyber-btn--sm cyber-btn--ghost"
+        @click="sidebarActive = !sidebarActive" style="margin-right: 8px; padding: 4px 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+        </svg>
+    </button>
+
+    <a :href="prefix + '/chat'" class="cyber-nav__brand">Open Roleplay Chat</a>
+    <ul class="cyber-nav__links">
+        <li><a :href="prefix + '/chat'" class="cyber-nav__link cyber-nav__link--active">Chat</a></li>
+        <li><a :href="prefix + '/characters'" class="cyber-nav__link">Characters</a></li>
+        <li><a :href="prefix + '/image-gen'" class="cyber-nav__link">Image Gen</a></li>
+    </ul>
+
+    <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }" :class="{ 'cyber-dropdown--open': open }"
+        @click.away="open = false" style="margin-left: auto;">
+        <button type="button" class="cyber-dropdown__trigger" @click="open = !open">
+            <div class="profile-avatar-sm" x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
+            <span x-text="user.display_name || 'User'"></span>
+        </button>
+        <ul class="cyber-dropdown__menu">
+            <li><a :href="prefix + '/profile'" class="cyber-dropdown__item">Settings</a></li>
+            <li>
+                <hr class="cyber-dropdown__divider">
+            </li>
+            <li><button class="cyber-dropdown__item text-danger" @click="logout()">Logout</button></li>
+        </ul>
+    </div>
+</nav>

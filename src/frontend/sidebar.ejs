@@ -1,0 +1,24 @@
+<!-- Character list sidebar -->
+<div class="sidebar cyber-scanlines cyber-scanlines--fine" id="chat-sidebar" :class="{ 'active': sidebarActive }">
+    <div class="character-list">
+        <p class="h5">Character Roster</p>
+        <template x-for="char in characters" :key="char.id">
+            <div class="character-item" :class="{ 'active': currentCharacter?.id === char.id }"
+                @click="selectCharacter(char)">
+                <div style="display: flex; align-items: center; width: 100%;">
+                    <template x-if="char.avatar">
+                        <img :src="char.avatar" class="char-list-avatar"
+                            style="width:30px; height:30px; border-radius:50%; margin-right:10px;">
+                    </template>
+                    <template x-if="!char.avatar">
+                        <div class="avatar-icon" x-text="char.name[0]"
+                            style="margin-right:10px; width:30px; height:30px; border-radius:50%;"></div>
+                    </template>
+                    <div style="flex-grow:1; overflow:hidden;">
+                        <span class="character-name" x-text="char.name"></span>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>

@@ -26,73 +26,50 @@
     <div class="wrapper cyber-scanlines cyber-scanlines--scroll cyber-scanlines--fine"
         style="height: 100vh; overflow-y: auto;">
 
-        <!-- Navigation bar -->
-        <nav class="cyber-nav">
-            <a :href="prefix + '/chat'" class="cyber-nav__brand">AI Character Chat</a>
-            <ul class="cyber-nav__links">
-                <li><a :href="prefix + '/chat'" class="cyber-nav__link">Chat</a></li>
-                <li><a :href="prefix + '/characters'" class="cyber-nav__link cyber-nav__link--active">Characters</a>
-                </li>
-                <li><a :href="prefix + '/image-gen'" class="cyber-nav__link">Image Gen</a></li>
-            </ul>
+        <!-- Head ( Navbar )  -->
+        <%- include('head_nav.ejs') %>
 
-            <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }"
-                :class="{ 'cyber-dropdown--open': open }" @click.away="open = false" style="margin-left: auto;">
-                <button type="button" class="cyber-dropdown__trigger" @click="open = !open">
-                    <div class="profile-avatar-sm"
-                        x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
-                    <span x-text="user.display_name || 'User'"></span>
-                </button>
-                <ul class="cyber-dropdown__menu">
-                    <li><a :href="prefix + '/profile'" class="cyber-dropdown__item">Settings</a></li>
-                    <li>
-                        <hr class="cyber-dropdown__divider">
-                    </li>
-                    <li><button class="cyber-dropdown__item text-danger" @click="logout()">Logout</button></li>
-                </ul>
-            </div>
-        </nav>
 
-        <div style="padding: var(--space-md);">
-            <div class="cyber-flex cyber-justify-between cyber-items-center cyber-mb-md">
-                <h2 class="m-0 cyber-text-glow" style="font-size: var(--text-2xl);">Characters Deck</h2>
-                <a :href="prefix + '/characters/add'" class="cyber-btn cyber-btn--filled cyber-btn--cyan">+ Deploy
-                    Character</a>
-            </div>
+            <div style="padding: var(--space-md);">
+                <div class="cyber-flex cyber-justify-between cyber-items-center cyber-mb-md">
+                    <h2 class="m-0 cyber-text-glow" style="font-size: var(--text-2xl);">Characters Deck</h2>
+                    <a :href="prefix + '/characters/add'" class="cyber-btn cyber-btn--filled cyber-btn--cyan">+ Deploy
+                        Character</a>
+                </div>
 
-            <!-- Character Grid -->
-            <div id="character-grid" class="cyber-grid--4 cyber-mb-lg">
-                <template x-for="char in characters" :key="char.slug">
-                    <div class="character-card cyber-card">
-                        <template x-if="char.avatar">
-                            <img :src="char.avatar" class="avatar-preview">
-                        </template>
-                        <template x-if="!char.avatar">
-                            <div class="avatar-preview" x-text="char.name[0]"></div>
-                        </template>
-                        <h3 x-text="char.name"></h3>
-                        <div class="cyber-flex cyber-justify-center cyber-gap-xs cyber-mt-md">
-                            <a :href="prefix + '/characters/edit/' + char.slug"
-                                class="cyber-btn cyber-btn--sm cyber-btn--ghost">Edit</a>
-                            <button class="cyber-btn cyber-btn--sm cyber-btn--magenta"
-                                @click="deleteCharacter(char.slug)">Delete</button>
+                <!-- Character Grid -->
+                <div id="character-grid" class="cyber-grid--4 cyber-mb-lg">
+                    <template x-for="char in characters" :key="char.slug">
+                        <div class="character-card cyber-card">
+                            <template x-if="char.avatar">
+                                <img :src="char.avatar" class="avatar-preview">
+                            </template>
+                            <template x-if="!char.avatar">
+                                <div class="avatar-preview" x-text="char.name[0]"></div>
+                            </template>
+                            <h3 x-text="char.name"></h3>
+                            <div class="cyber-flex cyber-justify-center cyber-gap-xs cyber-mt-md">
+                                <a :href="prefix + '/characters/edit/' + char.slug"
+                                    class="cyber-btn cyber-btn--sm cyber-btn--ghost">Edit</a>
+                                <button class="cyber-btn cyber-btn--sm cyber-btn--magenta"
+                                    @click="deleteCharacter(char.slug)">Delete</button>
+                            </div>
                         </div>
-                    </div>
-                </template>
-            </div>
+                    </template>
+                </div>
 
-            <!-- Danger Zone -->
-            <div class="cyber-alert cyber-alert--error cyber-mt-xl">
-                <div class="cyber-alert__title">System Purge / Warning</div>
-                <p class="cyber-text-secondary" style="margin-bottom: var(--space-xs);">
-                    Warning: You can purge all communication files and databases. This operation clears ALL chat
-                    histories and cannot be rolled back.
-                </p>
-                <button class="cyber-btn cyber-btn--sm cyber-btn--filled cyber-btn--magenta"
-                    @click="clearAllHistory()">PURGE CHAT HISTORIES</button>
-            </div>
+                <!-- Danger Zone -->
+                <div class="cyber-alert cyber-alert--error cyber-mt-xl">
+                    <div class="cyber-alert__title">System Purge / Warning</div>
+                    <p class="cyber-text-secondary" style="margin-bottom: var(--space-xs);">
+                        Warning: You can purge all communication files and databases. This operation clears ALL chat
+                        histories and cannot be rolled back.
+                    </p>
+                    <button class="cyber-btn cyber-btn--sm cyber-btn--filled cyber-btn--magenta"
+                        @click="clearAllHistory()">PURGE CHAT HISTORIES</button>
+                </div>
 
-        </div>
+            </div>
     </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

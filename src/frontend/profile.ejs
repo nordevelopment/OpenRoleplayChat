@@ -8,7 +8,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/public/cybercore.css">
@@ -20,78 +22,65 @@
 <body class="has-navbar" x-data="{ ...userProfileApp(), prefix: window.APP_CONFIG?.appPrefix || '' }"
     x-init="checkAuth().then(authenticated => { if (authenticated) loadProfile(); })" x-cloak>
 
-    <div class="wrapper cyber-scanlines cyber-scanlines--scroll cyber-scanlines--fine" style="height: 100vh; overflow-y: auto;">
-        
-        <!-- Navigation bar -->
-        <nav class="cyber-nav">
-            <a :href="prefix + '/chat'" class="cyber-nav__brand">AI Character Chat</a>
-            <ul class="cyber-nav__links">
-                <li><a :href="prefix + '/chat'" class="cyber-nav__link">Chat</a></li>
-                <li><a :href="prefix + '/characters'" class="cyber-nav__link">Characters</a></li>
-                <li><a :href="prefix + '/image-gen'" class="cyber-nav__link">Image Gen</a></li>
-            </ul>
-            
-            <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }" :class="{ 'cyber-dropdown--open': open }" @click.away="open = false" style="margin-left: auto;">
-                <button type="button" class="cyber-dropdown__trigger" @click="open = !open">
-                    <div class="profile-avatar-sm" x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
-                    <span x-text="user.display_name || 'User'"></span>
-                </button>
-                <ul class="cyber-dropdown__menu">
-                    <li><a :href="prefix + '/profile'" class="cyber-dropdown__item cyber-dropdown__item--active">Settings</a></li>
-                    <li><hr class="cyber-dropdown__divider"></li>
-                    <li><button class="cyber-dropdown__item text-danger" @click="logout()">Logout</button></li>
-                </ul>
-            </div>
-        </nav>
+    <div class="wrapper cyber-scanlines cyber-scanlines--scroll cyber-scanlines--fine"
+        style="height: 100vh; overflow-y: auto;">
 
-        <div style="display: flex; justify-content: center; padding: var(--space-md); margin-top: var(--space-md);">
-            <div class="cyber-card" style="width: 100%; max-width: 640px;">
-                <div class="cyber-card__header">
-                    <div class="cyber-card__icon">//</div>
-                    <h3 class="cyber-card__title">Profile Settings</h3>
+        <!-- Head ( Navbar )  -->
+        <%- include('head_nav.ejs') %>
+
+            <div style="display: flex; justify-content: center; padding: var(--space-md); margin-top: var(--space-md);">
+                <div class="cyber-card" style="width: 100%; max-width: 640px;">
+                    <div class="cyber-card__header">
+                        <div class="cyber-card__icon">//</div>
+                        <h3 class="cyber-card__title">Profile Settings</h3>
+                    </div>
+
+                    <form @submit.prevent="updateProfile()">
+                        <div class="cyber-field">
+                            <label class="cyber-field__label">Email (Identifier)</label>
+                            <input type="email" x-model="profileForm.email" class="cyber-input" required
+                                placeholder="user@net.corp">
+                        </div>
+
+                        <div class="cyber-field">
+                            <label class="cyber-field__label">Display Name</label>
+                            <input type="text" x-model="profileForm.display_name" class="cyber-input" required
+                                placeholder="Runner Name">
+                        </div>
+
+                        <div class="cyber-field">
+                            <label class="cyber-field__label">About You (optional)</label>
+                            <textarea x-model="profileForm.about" class="cyber-textarea" rows="4"
+                                placeholder="Tell us about yourself... This info helps AI characters understand and interact with you."></textarea>
+                            <small class="cyber-text-muted" style="margin-top: 4px; display: block;">
+                                This context is loaded during conversations to customize AI responses.
+                            </small>
+                        </div>
+
+                        <div class="cyber-field cyber-mb-lg">
+                            <label class="cyber-field__label">New Passcode (optional)</label>
+                            <input type="password" x-model="profileForm.password" class="cyber-input"
+                                placeholder="Enter new passcode to update">
+                            <small class="cyber-text-muted" style="margin-top: 4px; display: block;">Leave blank to keep
+                                current passcode.</small>
+                        </div>
+
+                        <div x-show="profileMessage"
+                            :class="profileMessage?.type === 'error' ? 'cyber-alert cyber-alert--error cyber-mb-md' : 'cyber-alert cyber-alert--success cyber-mb-md'"
+                            x-text="profileMessage?.text" class="cyber-p-sm"
+                            style="display:none; font-size: var(--text-sm); padding-left: var(--space-lg);"></div>
+
+                        <div class="cyber-flex cyber-gap-sm">
+                            <button type="submit" class="cyber-btn cyber-btn--filled cyber-btn--cyan"
+                                :disabled="profileLoading">
+                                <span x-show="!profileLoading">Save Changes</span>
+                                <span x-show="profileLoading">Processing...</span>
+                            </button>
+                            <a :href="prefix + '/chat'" class="cyber-btn cyber-btn--ghost">Back to Chat</a>
+                        </div>
+                    </form>
                 </div>
-                
-                <form @submit.prevent="updateProfile()">
-                    <div class="cyber-field">
-                        <label class="cyber-field__label">Email (Identifier)</label>
-                        <input type="email" x-model="profileForm.email" class="cyber-input" required placeholder="user@net.corp">
-                    </div>
-
-                    <div class="cyber-field">
-                        <label class="cyber-field__label">Display Name</label>
-                        <input type="text" x-model="profileForm.display_name" class="cyber-input" required placeholder="Runner Name">
-                    </div>
-
-                    <div class="cyber-field">
-                        <label class="cyber-field__label">About You (optional)</label>
-                        <textarea x-model="profileForm.about" class="cyber-textarea" rows="4"
-                            placeholder="Tell us about yourself... This info helps AI characters understand and interact with you."></textarea>
-                        <small class="cyber-text-muted" style="margin-top: 4px; display: block;">
-                            This context is loaded during conversations to customize AI responses.
-                        </small>
-                    </div>
-
-                    <div class="cyber-field cyber-mb-lg">
-                        <label class="cyber-field__label">New Passcode (optional)</label>
-                        <input type="password" x-model="profileForm.password" class="cyber-input"
-                            placeholder="Enter new passcode to update">
-                        <small class="cyber-text-muted" style="margin-top: 4px; display: block;">Leave blank to keep current passcode.</small>
-                    </div>
-
-                    <div x-show="profileMessage"
-                        :class="profileMessage?.type === 'error' ? 'cyber-alert cyber-alert--error cyber-mb-md' : 'cyber-alert cyber-alert--success cyber-mb-md'"
-                        x-text="profileMessage?.text" class="cyber-p-sm" style="display:none; font-size: var(--text-sm); padding-left: var(--space-lg);"></div>
-
-                    <div class="cyber-flex cyber-gap-sm">
-                        <button type="submit" class="cyber-btn cyber-btn--filled cyber-btn--cyan" :disabled="profileLoading">
-                            <span x-show="!profileLoading">Save Changes</span>
-                            <span x-show="profileLoading">Processing...</span>
-                        </button>
-                        <a :href="prefix + '/chat'" class="cyber-btn cyber-btn--ghost">Back to Chat</a>
-                    </div>
-                </form>
             </div>
-        </div>
     </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
