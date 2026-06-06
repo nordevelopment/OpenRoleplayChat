@@ -8,14 +8,16 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/public/cybercore.css">
     <link rel="stylesheet" href="/public/styles.css?v=<%= version %>">
-    
+
     <script src="/public/config.js"></script>
 </head>
 
@@ -25,7 +27,8 @@
     <div class="wrapper chat-page">
 
         <!-- Character list sidebar -->
-        <div class="sidebar cyber-scanlines cyber-scanlines--fine" id="chat-sidebar" :class="{ 'active': sidebarActive }">
+        <div class="sidebar cyber-scanlines cyber-scanlines--fine" id="chat-sidebar"
+            :class="{ 'active': sidebarActive }">
             <div class="character-list">
                 <p class="h5">Character Roster</p>
                 <template x-for="char in characters" :key="char.id">
@@ -33,10 +36,12 @@
                         @click="selectCharacter(char)">
                         <div style="display: flex; align-items: center; width: 100%;">
                             <template x-if="char.avatar">
-                                <img :src="char.avatar" class="char-list-avatar" style="width:30px; height:30px; border-radius:50%; margin-right:10px;">
+                                <img :src="char.avatar" class="char-list-avatar"
+                                    style="width:30px; height:30px; border-radius:50%; margin-right:10px;">
                             </template>
                             <template x-if="!char.avatar">
-                                <div class="avatar-icon" x-text="char.name[0]" style="margin-right:10px; width:30px; height:30px; border-radius:50%;"></div>
+                                <div class="avatar-icon" x-text="char.name[0]"
+                                    style="margin-right:10px; width:30px; height:30px; border-radius:50%;"></div>
                             </template>
                             <div style="flex-grow:1; overflow:hidden;">
                                 <span class="character-name" x-text="char.name"></span>
@@ -46,9 +51,10 @@
                 </template>
             </div>
         </div>
-        
+
         <!-- Mobile Sidebar Overlay -->
-        <div class="sidebar-overlay" x-show="sidebarActive" x-transition.opacity @click="sidebarActive = false" x-cloak></div>
+        <div class="sidebar-overlay" x-show="sidebarActive" x-transition.opacity @click="sidebarActive = false" x-cloak>
+        </div>
 
         <!-- Chat Area -->
         <div class="chat-container">
@@ -57,26 +63,32 @@
             <nav class="cyber-nav">
                 <button type="button" id="chat-sidebar-toggle" class="cyber-btn cyber-btn--sm cyber-btn--ghost"
                     @click="sidebarActive = !sidebarActive" style="margin-right: 8px; padding: 4px 8px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
                     </svg>
                 </button>
-                
+
                 <a :href="prefix + '/chat'" class="cyber-nav__brand">AI Character Chat</a>
                 <ul class="cyber-nav__links">
                     <li><a :href="prefix + '/chat'" class="cyber-nav__link cyber-nav__link--active">Chat</a></li>
                     <li><a :href="prefix + '/characters'" class="cyber-nav__link">Characters</a></li>
                     <li><a :href="prefix + '/image-gen'" class="cyber-nav__link">Image Gen</a></li>
                 </ul>
-                
-                <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }" :class="{ 'cyber-dropdown--open': open }" @click.away="open = false" style="margin-left: auto;">
+
+                <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }"
+                    :class="{ 'cyber-dropdown--open': open }" @click.away="open = false" style="margin-left: auto;">
                     <button type="button" class="cyber-dropdown__trigger" @click="open = !open">
-                        <div class="profile-avatar-sm" x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
+                        <div class="profile-avatar-sm"
+                            x-text="user.display_name ? user.display_name[0].toUpperCase() : 'U'"></div>
                         <span x-text="user.display_name || 'User'"></span>
                     </button>
                     <ul class="cyber-dropdown__menu">
                         <li><a :href="prefix + '/profile'" class="cyber-dropdown__item">Settings</a></li>
-                        <li><hr class="cyber-dropdown__divider"></li>
+                        <li>
+                            <hr class="cyber-dropdown__divider">
+                        </li>
                         <li><button class="cyber-dropdown__item text-danger" @click="logout()">Logout</button></li>
                     </ul>
                 </div>
@@ -88,26 +100,35 @@
                     <img :src="currentCharacter.avatar" id="character-avatar" style="border-radius: 50%;">
                 </template>
                 <template x-if="currentCharacter && !currentCharacter.avatar">
-                    <div class="avatar-icon" x-text="currentCharacter.name[0].toUpperCase()" style="width:36px; height:36px; border-radius:50%; margin-right: 4px;"></div>
+                    <div class="avatar-icon" x-text="currentCharacter.name[0].toUpperCase()"
+                        style="width:36px; height:36px; border-radius:50%; margin-right: 4px;"></div>
                 </template>
                 <template x-if="!currentCharacter">
-                    <div class="avatar-icon" style="width:36px; height:36px; border-radius:50%; margin-right: 4px;">?</div>
+                    <div class="avatar-icon" style="width:36px; height:36px; border-radius:50%; margin-right: 4px;">?
+                    </div>
                 </template>
 
                 <div style="flex-grow:1;">
-                    <h2 id="character-name" x-text="currentCharacter ? currentCharacter.name : 'Select a character'"></h2>
+                    <h2 id="character-name" x-text="currentCharacter ? currentCharacter.name : 'Select a character'">
+                    </h2>
                 </div>
-                
+
                 <!-- Action Controls -->
                 <div class="cyber-flex cyber-gap-xs" x-show="currentCharacter">
-                    <button @click="clearHistory()" class="cyber-btn cyber-btn--sm cyber-btn--ghost cyber-btn--magenta" title="Purge Feed" style="padding: 6px 8px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
-                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+                    <button @click="clearHistory()" class="cyber-btn cyber-btn--sm cyber-btn--ghost cyber-btn--magenta"
+                        title="Purge Feed" style="padding: 6px 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+                            <path
+                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
                         </svg>
                     </button>
-                    <button @click="clearMemory()" class="cyber-btn cyber-btn--sm cyber-btn--ghost cyber-btn--yellow" title="Wipe Memory Core" style="padding: 6px 8px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <button @click="clearMemory()" class="cyber-btn cyber-btn--sm cyber-btn--ghost cyber-btn--yellow"
+                        title="Wipe Memory Core" style="padding: 6px 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            viewBox="0 0 16 16">
                             <path d="M8 16s-1 0-1-1 1-4 5-4 5 3 4 5 4 1-1 1-1H8z" />
                             <path d="M8 1A7 7 0 1 0 8 15a7 7 0 0 0 0-14zm0 1A6 6 0 1 1 8 15a6 6 0 0 1 0-12z" />
                         </svg>
@@ -122,29 +143,36 @@
                         <template x-if="msg.imageFilePath">
                             <div class="mb-2 chat-img">
                                 <a :href="msg.imageFilePath" target="_blank">
-                                    <img :src="msg.imageFilePath" style="max-width: 240px; max-height: 240px; border: 1px solid var(--cyber-cyan-500);">
+                                    <img :src="msg.imageFilePath"
+                                        style="max-width: 240px; max-height: 240px; border: 1px solid var(--cyber-cyan-500);">
                                 </a>
                             </div>
                         </template>
                         <template x-if="msg.image && !msg.imageFilePath">
                             <div class="mb-2 chat-img">
-                                <img :src="msg.image" style="max-width: 240px; max-height: 240px; border: 1px solid var(--cyber-cyan-500);">
+                                <img :src="msg.image"
+                                    style="max-width: 240px; max-height: 240px; border: 1px solid var(--cyber-cyan-500);">
                             </div>
                         </template>
                         <div class="content" x-html="renderMarkdown(msg.content)"></div>
                     </div>
                 </template>
-                
+
                 <!-- Streaming typing state -->
                 <div class="message ai-message" x-show="isTyping">
                     <template x-if="typingReasoning">
                         <details class="reasoning-details" style="margin-bottom: 8px;" open>
-                            <summary class="cyber-text-muted cyber-font-medium" style="cursor:pointer; font-size: var(--text-xs); text-transform: uppercase;">Thinking Core...</summary>
-                            <div class="content cyber-text-muted mt-1" style="font-size: var(--text-sm); font-family: var(--font-mono);" x-html="renderMarkdown(typingReasoning)"></div>
+                            <summary class="cyber-text-muted cyber-font-medium"
+                                style="cursor:pointer; font-size: var(--text-xs); text-transform: uppercase;">Thinking
+                                Core...</summary>
+                            <div class="content cyber-text-muted mt-1"
+                                style="font-size: var(--text-sm); font-family: var(--font-mono);"
+                                x-html="renderMarkdown(typingReasoning)"></div>
                         </details>
                     </template>
                     <div class="content" x-show="typingMessage" x-html="renderMarkdown(typingMessage)"></div>
-                    <div class="cyber-spinner-dots cyber-spinner-dots--magenta" x-show="!typingMessage && !typingReasoning" style="padding: 6px 12px;">
+                    <div class="cyber-spinner-dots cyber-spinner-dots--magenta"
+                        x-show="!typingMessage && !typingReasoning" style="padding: 6px 12px;">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -156,7 +184,8 @@
             <div x-show="selectedImage" id="image-preview-container" class="cyber-px-md cyber-py-sm"
                 style="background: var(--cyber-void-800); border-top: 1px solid var(--color-border-default);">
                 <div style="position: relative; display: inline-block;">
-                    <img id="image-preview" class="chat-img" :src="selectedImage" style="max-height: 120px; border: 1px solid var(--cyber-magenta-500);">
+                    <img id="image-preview" class="chat-img" :src="selectedImage"
+                        style="max-height: 120px; border: 1px solid var(--cyber-magenta-500);">
                     <button @click="clearImage()" class="cyber-btn cyber-btn--sm cyber-btn--filled cyber-btn--magenta"
                         style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; padding: 0; line-height: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; clip-path: none;">
                         &times;
@@ -167,18 +196,33 @@
             <!-- Chat Input Area -->
             <div class="chat-input-area">
                 <div class="input-wrapper">
-                    <label for="image-input" style="cursor:pointer; display: flex; align-items: center;">
-                        <img src="public/icons/img.svg" alt="Attach Image" width="22" height="22">
-                        <input type="file" id="image-input" x-ref="imageInput" @change="handleImage" accept="image/*" style="display:none;">
+                    <label for="image-input cyber-input-group">
+                        <div class="icon-card__icon cyber-icon cyber-icon--cyan" style="width: 30px; height: 30px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" fill="#000" />
+                                <path fill="#000" d="M21 15l-5-5L5 21" />
+                            </svg>
+                            <!-- Or use the raw SVG files from node_modules/cybercore-css/src/icons/svg/ -->
+                        </div>
+                        <input type="file" id="image-input" x-ref="imageInput" @change="handleImage" accept="image/*"
+                            style="display:none;">
                     </label>
-                    
+
                     <textarea x-model="newMessage" class="message-input"
                         @keydown.enter.prevent="if(!$event.shiftKey && !$event.ctrlKey) sendMessage()"
                         placeholder="Establish link... Type message..." autocomplete="off" rows="1"
                         :style="`height: ${Math.min(newMessage.split('\n').length * 24 + 16, 200)}px`"></textarea>
-                    
+
                     <button class="send-button" @click="sendMessage()" :disabled="!currentCharacter || isTyping">
-                        <img src="public/icons/send.svg" alt="Send Link" width="18" height="18">
+                        <div class="icon-card__icon cyber-icon cyber-icon--cyan" style="width: 30px; height: 30px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                <line x1="11" y1="13" x2="11.5" y2="13.5" />
+                            </svg>
+                        </div>
                     </button>
                 </div>
             </div>
