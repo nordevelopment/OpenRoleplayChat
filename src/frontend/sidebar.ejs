@@ -1,7 +1,13 @@
 <!-- Character list sidebar -->
 <div class="sidebar cyber-scanlines cyber-scanlines--fine" id="chat-sidebar" :class="{ 'active': sidebarActive }">
     <div class="character-list">
-        <p class="h5">Character Roster</p>
+        <div class="sidebar-header">
+            <span class="h5">Character Roster</span>
+            <div class="cyber-status">
+                <span class="cyber-status__dot"></span><span>ONLINE</span>
+            </div>
+        </div>
+
         <template x-for="char in characters" :key="char.id">
             <div class="character-item" :class="{ 'active': currentCharacter?.id === char.id }"
                 @click="selectCharacter(char)">

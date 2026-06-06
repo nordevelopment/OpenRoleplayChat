@@ -76,6 +76,17 @@ See **Quick Start** section below for detailed installation instructions.
 - **Enterprise Scale** - Designed for small teams/personal use
 
 ---
+### Screenshots
+
+<img width="1272" height="897" alt="Image" src="https://github.com/user-attachments/assets/7a397f6e-2ded-4652-a829-5cf3f42288b8" />
+
+<img width="1271" height="898" alt="Image" src="https://github.com/user-attachments/assets/f680bd62-7cdf-4513-80db-673113c58928" />
+
+<img width="1267" height="898" alt="Image" src="https://github.com/user-attachments/assets/1f68cccc-1da8-42bc-a010-d04c8cff174b" />
+
+
+
+---
 ## 🚀 **Quick Start**
 
 

@@ -71,6 +71,7 @@ code {
     overflow: hidden;
 }
 
+
 .login-container {
     display: flex;
     justify-content: center;
@@ -117,7 +118,7 @@ code {
 
 /* --- Sidebar --- */
 .sidebar {
-    width: 280px;
+    width: 260px;
     background: var(--bg-sidebar);
     border-right: 1px solid var(--color-border-default);
     display: flex;
@@ -170,6 +171,7 @@ code {
     align-items: center;
     gap: 12px;
     cursor: pointer;
+    font-size: 16px;
     clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
 }
 
@@ -185,13 +187,7 @@ code {
     box-shadow: 0 0 15px rgba(255, 42, 109, 0.2);
 }
 
-.character-name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--text-sm);
-    color: var(--color-text-primary);
-    text-transform: uppercase;
-}
+
 
 .avatar-icon {
     width: 32px;
@@ -238,13 +234,12 @@ code {
     object-fit: cover;
 }
 
-#character-name {
+.chat-character-name {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
-    font-weight: 700;
-    color: var(--cyber-cyan-500);
-    text-shadow: var(--glow-text-cyan);
+    font-size: var(--text-sm);
     text-transform: uppercase;
+    color: var(--cyber-green-500);
+    text-shadow: 0 0 10px var(--cyber-green-500);
 }
 
 /* --- Chat Window & Messages --- */

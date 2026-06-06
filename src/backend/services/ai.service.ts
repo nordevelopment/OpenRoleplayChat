@@ -116,7 +116,7 @@ Return only a bulleted list of events, or "NONE" if no new events found. Use the
       await fs.writeFile(fullPath, resized);
 
       // Return relative path for frontend use
-      const filePath = `${config.storageDir}/images/${filename}`;
+      const filePath = `/storage/images/${filename}`;
 
       return { filePath, base64Image };
 
