@@ -10,9 +10,9 @@
 
     <a :href="prefix + '/chat'" class="cyber-nav__brand">Open Roleplay Chat</a>
     <ul class="cyber-nav__links">
-        <li><a :href="prefix + '/chat'" class="cyber-nav__link cyber-nav__link--active">Chat</a></li>
-        <li><a :href="prefix + '/characters'" class="cyber-nav__link">Characters</a></li>
-        <li><a :href="prefix + '/image-gen'" class="cyber-nav__link">Image Gen</a></li>
+        <li><a :href="prefix + '/chat'" class="cyber-nav__link" :class="{ 'cyber-nav__link--active': window.location.pathname === (prefix + '/chat') }">Chat</a></li>
+        <li><a :href="prefix + '/characters'" class="cyber-nav__link" :class="{ 'cyber-nav__link--active': window.location.pathname.startsWith(prefix + '/characters') }">Characters</a></li>
+        <li><a :href="prefix + '/image-gen'" class="cyber-nav__link" :class="{ 'cyber-nav__link--active': window.location.pathname.startsWith(prefix + '/image-gen') }">Image Gen</a></li>
     </ul>
 
     <div class="cyber-dropdown cyber-dropdown--right" x-data="{ open: false }" :class="{ 'cyber-dropdown--open': open }"
