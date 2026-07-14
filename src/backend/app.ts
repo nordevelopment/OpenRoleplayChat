@@ -19,7 +19,8 @@ import { authRoutes } from './controllers/auth.js';
 import { userRoutes } from './controllers/user.js';
 import { imageRoutes } from './controllers/image.js';
 import { viewsRoutes } from './controllers/views.js';
-import { initDB } from './database/sqlite.js';
+import { settingsRoutes } from './controllers/settings.js';
+import { initDB, isDatabaseInitialized } from './database/sqlite.js';
 
 
 declare module 'fastify' {
@@ -50,6 +51,13 @@ export async function createApp() {
       fs.mkdirSync(folderPath);
     }
   }
+
+  // Ensure public/icons directory exists to prevent fastifyStatic from crashing
+  const iconsPath = path.join(process.cwd(), 'public/icons');
+  if (!fs.existsSync(iconsPath)) {
+    fs.mkdirSync(iconsPath, { recursive: true });
+  }
+
 
   const isDev = config.nodeEnv !== 'production' || config.loggingDebug;
 
@@ -83,6 +91,30 @@ export async function createApp() {
       sameSite: 'lax',
       path: '/',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+    }
+  });
+
+  // Setup Redirection Hook: if API_KEY is missing or DB is uninitialized, redirect
+  server.addHook('onRequest', async (request, reply) => {
+    const url = request.url;
+    if (
+      url.startsWith('/settings') ||
+      url.startsWith('/api/settings') ||
+      url.startsWith('/setup-db') ||
+      url.startsWith('/api/setup-db') ||
+      url.startsWith('/public/') ||
+      url.startsWith('/storage/') ||
+      url.includes('.')
+    ) {
+      return;
+    }
+
+    if (!config.apiKey) {
+      return reply.redirect('/settings');
+    }
+
+    if (!isDatabaseInitialized()) {
+      return reply.redirect('/setup-db');
     }
   });
 
@@ -156,6 +188,8 @@ export async function createApp() {
 
   await server.register(chatRoutes);
   await server.register(imageRoutes);
+  await server.register(settingsRoutes);
 
   return server;
 }
+
